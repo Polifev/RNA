@@ -15,12 +15,16 @@ public class App {
 		Locale.setDefault(Locale.US);
 		
 		List<ILabelledSample<Double, Byte>> samples = new ArrayList<ILabelledSample<Double, Byte>>();
-		samples.add(new PerceptronSample((byte)0, 0.0, 0.0));
-		samples.add(new PerceptronSample((byte)1, 0.0, 1.0));
-		samples.add(new PerceptronSample((byte)1, 1.0, 0.0));
-		samples.add(new PerceptronSample((byte)1, 1.0, 1.0));
+		samples.add(new PerceptronSample((byte)0, 0.0, 0.0, 0.0));
+		samples.add(new PerceptronSample((byte)1, 0.0, 0.0, 1.0));
+		samples.add(new PerceptronSample((byte)1, 0.0, 1.0, 0.0));
+		samples.add(new PerceptronSample((byte)1, 0.0, 1.0, 1.0));
+		samples.add(new PerceptronSample((byte)0, 1.0, 0.0, 0.0));
+		samples.add(new PerceptronSample((byte)0, 1.0, 0.0, 1.0));
+		samples.add(new PerceptronSample((byte)0, 1.0, 1.0, 0.0));
+		samples.add(new PerceptronSample((byte)0, 1.0, 1.0, 1.0));
 		
-		INeuron<Double, Byte> perceptron = new Perceptron(2, 0.2);
+		INeuron<Double, Byte> perceptron = new Perceptron(3, 0.2);
 		for(int i = 0; i < 10; i++) {
 			System.out.println("Iteration " + (i+1));
 			System.out.println("Test:");
