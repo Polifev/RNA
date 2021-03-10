@@ -6,128 +6,137 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import be.hepl.rna.LabeledSample;
-import be.hepl.rna.Sample;
+import be.hepl.rna.common.IIterationEvaluation;
+import be.hepl.rna.common.ILayer;
+import be.hepl.rna.common.INeuralNetwork;
+import be.hepl.rna.common.ISample;
+import be.hepl.rna.common.ISampleEvaluation;
+import be.hepl.rna.common.ITrainingMode;
+import be.hepl.rna.common.impl.ActivationFunctions;
+import be.hepl.rna.common.impl.CommonLabeledSample;
 import cern.colt.matrix.DoubleFactory1D;
 import cern.colt.matrix.DoubleMatrix1D;
-import cern.colt.matrix.impl.DenseDoubleMatrix1D;
+import cern.colt.matrix.DoubleMatrix2D;
 import cern.colt.matrix.linalg.Algebra;
 
-public class MatrixNeuralNetwork {
+public class MatrixNeuralNetwork implements INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D>{
+	private static final DoubleMatrix1D IMAGINARY_INPUT = DoubleFactory1D.dense.make(new double[] {1.0});
+	
 	// Training data
 	private List<DoubleMatrix1D> trainingInput = new ArrayList<>();
 	private List<DoubleMatrix1D> trainingOutput = new ArrayList<>();
 
 	// Layers (ordered in two ways)
-	private List<Layer> layers = new LinkedList<>();
-	private List<Layer> reverseLayers = new LinkedList<>();
+	private List<ILayer<DoubleMatrix2D>> layers = new LinkedList<>();
+	private List<ILayer<DoubleMatrix2D>> reverseLayers = new LinkedList<>();
 
-	// Callbacks
-	private Consumer<Iteration> iterationProcessedCallback = i -> {};
-	private Consumer<SampleEvaluation> sampleProcessedCallback = s -> {};
-	private Predicate<Iteration> earlyStoppingCondition = i -> false;
+	// Training mode
+	private ITrainingMode<DoubleMatrix1D, DoubleMatrix2D> trainingMode;
 	
-
-	public void addLayer(Layer layer) {
+	// Callbacks
+	private Consumer<ISampleEvaluation<DoubleMatrix1D>> sampleProcessedCallback = sampleEvaluation -> {};
+	private Consumer<Integer> iterationStartsCallback = i -> {};
+	private Consumer<IIterationEvaluation<DoubleMatrix1D>> iterationEndsCallback = iterationEvaluation -> {};
+	private Predicate<IIterationEvaluation<DoubleMatrix1D>> earlyStoppingCondition = iterationEvaluation -> false;
+	
+	public MatrixNeuralNetwork(ITrainingMode<DoubleMatrix1D, DoubleMatrix2D> trainingMode) {
+		this.trainingMode = trainingMode;
+	}
+	
+	@Override
+	public void addLayer(ILayer<DoubleMatrix2D> layer) {
 		layers.add(layer);
 		reverseLayers.add(0, layer);
 	}
 
-	public void prepareTraining(Iterable<LabeledSample> trainingSamples) {
+	@Override
+	public void prepareTraining(Iterable<CommonLabeledSample> trainingSamples) {
 		trainingInput.clear();
 		trainingOutput.clear();
-		DoubleMatrix1D imaginaryInput = new DenseDoubleMatrix1D(new double[] { 1.0 });
-		for (LabeledSample sample : trainingSamples) {
-			trainingInput
-					.add(DoubleFactory1D.dense.append(imaginaryInput, DoubleFactory1D.dense.make(sample.inputs())));
+		for (CommonLabeledSample sample : trainingSamples) {
+			trainingInput.add(buildInputMatrix(sample.inputs()));
 			trainingOutput.add(DoubleFactory1D.dense.make(sample.expectedOutput()));
 		}
 	}
 
-	public void trainPerceptron(int iterationCount) {
+	@Override
+	public void train(int iterationCount) {
 		boolean earlyStopped = false;
 		
 		// For each iterations
 		for (int i = 0; i < iterationCount && !earlyStopped; i++) {
-			Iteration iteration = new Iteration(i);
+			iterationStartsCallback.accept(i);
+			MatrixIterationEvaluation iteration = new MatrixIterationEvaluation(i);
 			
 			// For each sample
 			for (int sampleIndex = 0; sampleIndex < trainingInput.size(); sampleIndex++) {
-				SampleEvaluation sampleEvaluation = new SampleEvaluation();
+				// Evaluate sample labeling
+				MatrixSampleEvaluation sampleEvaluation = evaluate(trainingInput.get(sampleIndex));
+				sampleEvaluation.setExpectedOutput(trainingOutput.get(sampleIndex));
 				
-				DoubleMatrix1D givenInput = trainingInput.get(sampleIndex);
-				DoubleMatrix1D expectedOutput = trainingOutput.get(sampleIndex);
-				DoubleMatrix1D[] layerPotentials = new DoubleMatrix1D[1 + this.layers.size()];
-				DoubleMatrix1D[] layerOutputs = new DoubleMatrix1D[1 + this.layers.size()];
-				
-				layerPotentials[0] = givenInput;
-				layerOutputs[0] = givenInput;
-
-				// 1. >> Propagate forward >>
-				int previousIndex = 0;
-				for (Layer layer : this.layers) {
-					int currentIndex = previousIndex + 1; 
-					layerPotentials[currentIndex] = Algebra.DEFAULT.mult(layer.getWeights(), layerOutputs[previousIndex]);
-					layerOutputs[currentIndex] =  layerPotentials[currentIndex].assign(layer.getActivationFunction());
-					previousIndex = currentIndex;
-				}
-				sampleEvaluation.setGivenInput(givenInput);
-				sampleEvaluation.setExpectedOutput(expectedOutput);
-				sampleEvaluation.setLayerPotentials(layerPotentials);
-				sampleEvaluation.setLayerOutputs(layerOutputs);
-				
-				// 2. << Back Propagate error <<
-				if (layers.size() > 1) {
-					// TODO backpropagation
-				} else {
-					// TODO normale propagation
-				}
-				
+				// Call the sample based training
+				trainingMode.sampleBasedWeightsCorrection(sampleEvaluation, this.layers);
 				sampleProcessedCallback.accept(sampleEvaluation);
 			}
 			
-			iterationProcessedCallback.accept(iteration);
+			// Call the iteration based training
+			trainingMode.iterationBasedWeightsCorrection(iteration, layers);
+			iterationEndsCallback.accept(iteration);
 			earlyStopped = earlyStoppingCondition.test(iteration);
 		}
 	}
-
-	public SampleEvaluation evaluate(Sample sample) {
-		SampleEvaluation sampleEvaluation = new SampleEvaluation();
+	
+	@Override
+	public MatrixSampleEvaluation evaluate(ISample sample) {
+		return evaluate(buildInputMatrix(sample.inputs()));
+	}
+	
+	@Override
+	public void onSampleProcessed(Consumer<ISampleEvaluation<DoubleMatrix1D>> callback) {
+		this.sampleProcessedCallback = callback;
+	}
+	
+	@Override
+	public void onIterationStarts(Consumer<Integer> callback) {
+		this.iterationStartsCallback = callback;
+	}
+	
+	@Override
+	public void onIterationEnds(Consumer<IIterationEvaluation<DoubleMatrix1D>> callback) {
+		this.iterationEndsCallback = callback;
+	}
+	
+	@Override
+	public void setEarlyStoppingCondition(Predicate<IIterationEvaluation<DoubleMatrix1D>> condition) {
+		this.earlyStoppingCondition = condition;
+	}
+	
+	private MatrixSampleEvaluation evaluate(DoubleMatrix1D input) {
+		MatrixSampleEvaluation sampleEvaluation = new MatrixSampleEvaluation();
 		
-		DoubleMatrix1D givenInput = DoubleFactory1D.dense.append(DoubleFactory1D.dense.make(new double[] {1.0}), DoubleFactory1D.dense.make(sample.inputs()));
+		
 		DoubleMatrix1D[] layerPotentials = new DoubleMatrix1D[1 + this.layers.size()];
 		DoubleMatrix1D[] layerOutputs = new DoubleMatrix1D[1 + this.layers.size()];
 		
-		layerPotentials[0] = givenInput;
-		layerOutputs[0] = givenInput;
+		layerPotentials[0] = input;
+		layerOutputs[0] = input;
 
 		// 1. >> Propagate forward >>
 		int previousIndex = 0;
-		for (Layer layer : this.layers) {
+		for (ILayer<DoubleMatrix2D> layer : this.layers) {
 			int currentIndex = previousIndex + 1; 
 			layerPotentials[currentIndex] = Algebra.DEFAULT.mult(layer.getWeights(), layerOutputs[previousIndex]);
-			layerOutputs[currentIndex] =  layerPotentials[currentIndex].assign(layer.getActivationFunction());
+			layerOutputs[currentIndex] =  layerPotentials[currentIndex].assign((val) -> ActivationFunctions.get(layer.getActivationFunctionName()).apply(val));
 			previousIndex = currentIndex;
 		}
-		sampleEvaluation.setGivenInput(givenInput);
+		sampleEvaluation.setGivenInput(input);
 		sampleEvaluation.setLayerPotentials(layerPotentials);
 		sampleEvaluation.setLayerOutputs(layerOutputs);
 		
 		return sampleEvaluation;
 	}
-
-	public MatrixNeuralNetwork onIterationEnds(Consumer<Iteration> callback) {
-		this.iterationProcessedCallback = callback;
-		return this;
-	}
 	
-	public MatrixNeuralNetwork onSampleProcessed(Consumer<SampleEvaluation> callback) {
-		this.sampleProcessedCallback = callback;
-		return this;
-	}
-	
-	public MatrixNeuralNetwork setEarlyStoppignCondition(Predicate<Iteration> condition) {
-		this.earlyStoppingCondition = condition;
-		return this;
+	private DoubleMatrix1D buildInputMatrix(double[] inputArr) {
+		return DoubleFactory1D.dense.append(IMAGINARY_INPUT, DoubleFactory1D.dense.make(inputArr));
 	}
 }

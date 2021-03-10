@@ -3,7 +3,7 @@ package be.hepl.rna.matrix;
 import cern.colt.function.DoubleDoubleFunction;
 import cern.colt.function.DoubleFunction;
 
-public class CommonFunctions {
+public class MatrixFunctions {
 	public static final DoubleDoubleFunction SUBSTRACTION = new Substraction();
 	public static final DoubleDoubleFunction ADDITION = new Addition();
 	public static final DoubleDoubleFunction PRODUCT = new Product();

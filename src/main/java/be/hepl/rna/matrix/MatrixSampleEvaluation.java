@@ -1,12 +1,15 @@
 package be.hepl.rna.matrix;
 
+import be.hepl.rna.common.ISampleEvaluation;
 import cern.colt.matrix.DoubleMatrix1D;
 
-public class SampleEvaluation {
+public class MatrixSampleEvaluation implements ISampleEvaluation<DoubleMatrix1D>{
 	private DoubleMatrix1D givenInput;
 	private DoubleMatrix1D expectedOutput;
 	private DoubleMatrix1D[] layerPotentials;
 	private DoubleMatrix1D[] layerOutputs;
+	
+	MatrixSampleEvaluation() {}
 	
 	public DoubleMatrix1D getGivenInput() {
 		return givenInput;
@@ -32,6 +35,4 @@ public class SampleEvaluation {
 	public void setLayerOutputs(DoubleMatrix1D[] layerOutputs) {
 		this.layerOutputs = layerOutputs;
 	}
-	
-	
 }
