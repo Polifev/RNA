@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import be.hepl.rna.common.IIterationEvaluation;
+import be.hepl.rna.common.ILabeledSample;
 import be.hepl.rna.common.ILayer;
 import be.hepl.rna.common.INeuralNetwork;
 import be.hepl.rna.common.ISample;
@@ -50,10 +51,10 @@ public class MatrixNeuralNetwork implements INeuralNetwork<DoubleMatrix1D, Doubl
 	}
 
 	@Override
-	public void prepareTraining(Iterable<CommonLabeledSample> trainingSamples) {
+	public void prepareTraining(Iterable<ILabeledSample> trainingSamples) {
 		trainingInput.clear();
 		trainingOutput.clear();
-		for (CommonLabeledSample sample : trainingSamples) {
+		for (ILabeledSample sample : trainingSamples) {
 			trainingInput.add(buildInputMatrix(sample.inputs()));
 			trainingOutput.add(DoubleFactory1D.dense.make(sample.expectedOutput()));
 		}

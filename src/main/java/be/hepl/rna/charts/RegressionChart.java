@@ -9,11 +9,13 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import be.hepl.rna.common.ILabeledSample;
+import be.hepl.rna.common.ILinearModel;
 
 public class RegressionChart {
 
@@ -25,6 +27,12 @@ public class RegressionChart {
 		this.title = title;
 	}
 	
+	public void setLinearModel(ILinearModel model, double samplingMin, double samplingMax, double samplingStep) {
+		for(double x = samplingMin; x <= samplingMax; x+= samplingStep) {
+			regression.add(new XYDataItem(x, model.predict(x)));
+		}
+	}
+	
 	public JFrame asJFrame() {
 		XYSeriesCollection dataset = new XYSeriesCollection();
 		dataset.addSeries(data);
@@ -33,7 +41,9 @@ public class RegressionChart {
 	}
 	
 	public void setData(Iterable<ILabeledSample> data) {
-		
+		for(ILabeledSample s : data) {
+			this.data.add(new XYDataItem(s.inputs()[0], s.expectedOutput()[0]));
+		}
 	}
 	
 	public static class Frame extends JFrame {

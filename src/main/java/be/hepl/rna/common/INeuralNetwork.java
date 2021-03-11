@@ -2,7 +2,6 @@ package be.hepl.rna.common;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import be.hepl.rna.common.impl.CommonLabeledSample;
 
 /**
  * 
@@ -13,7 +12,7 @@ import be.hepl.rna.common.impl.CommonLabeledSample;
  */
 public interface INeuralNetwork<D1, D2> {
 	void addLayer(ILayer<D2> layer);
-	void prepareTraining(Iterable<CommonLabeledSample> trainingSamples);
+	void prepareTraining(Iterable<ILabeledSample> trainingSamples);
 	void train(int iterationCount);
 	ISampleEvaluation<D1> evaluate(ISample sample);
 	void onSampleProcessed(Consumer<ISampleEvaluation<D1>> callback);
