@@ -13,6 +13,7 @@ import cern.colt.matrix.DoubleMatrix2D;
 import cern.colt.matrix.linalg.Algebra;
 
 public class PerceptronTrainingMode implements ITrainingMode<DoubleMatrix1D, DoubleMatrix2D> {
+	
 	@Override
 	public void sampleBasedWeightsCorrection(ISampleEvaluation<DoubleMatrix1D> sampleEvaluation,
 			List<ILayer<DoubleMatrix2D>> layers) {
