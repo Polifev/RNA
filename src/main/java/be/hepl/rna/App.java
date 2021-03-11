@@ -12,6 +12,7 @@ import be.hepl.rna.common.ILabeledSample;
 import be.hepl.rna.common.INeuralNetwork;
 import be.hepl.rna.common.ISample;
 import be.hepl.rna.common.impl.CommonLabeledSample;
+import be.hepl.rna.examples.PerceptronAnd;
 import be.hepl.rna.matrix.MatrixLayer;
 import be.hepl.rna.matrix.MatrixModelWrapper;
 import be.hepl.rna.matrix.MatrixNeuralNetwork;
@@ -21,7 +22,6 @@ import cern.colt.matrix.DoubleMatrix2D;
 
 public class App {
 	public static void main(String[] args) {
-		
 		// Initializing a list of samples
 		List<ILabeledSample> trainingSamples = new ArrayList<>();
 		trainingSamples.add(new CommonLabeledSample(new double[] { 0.0 }, new double[] { 0.0 }));
@@ -37,13 +37,20 @@ public class App {
 		trainingSamples.add(new CommonLabeledSample(new double[] { 0.44 }, new double[] { 0.79 }));
 		trainingSamples.add(new CommonLabeledSample(new double[] { 0.55 }, new double[] { 1.1 }));
 		
+		/*List<CommonLabeledSample> trainingSamples = new ArrayList<>();
+		//																4 neurones =>     1         2        3    4
+		//																		     (x1 || x2) (x1 && x2) (!x1) (x2)
+		trainingSamples.add(new CommonLabeledSample(new double[] { 0.0, 0.0 }, new double[] { 0.0, 0.0, 1.0, 0.0 }));
+		trainingSamples.add(new CommonLabeledSample(new double[] { 0.0, 1.0 }, new double[] { 1.0, 0.0, 1.0, 1.0 }));
+		trainingSamples.add(new CommonLabeledSample(new double[] { 1.0, 0.0 }, new double[] { 1.0, 0.0, 0.0, 0.0 }));
+		trainingSamples.add(new CommonLabeledSample(new double[] { 1.0, 1.0 }, new double[] { 1.0, 1.0, 0.0, 1.0 }));*/
+		
 		// Setting up the model
 		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(new PerceptronTrainingMode());
 		model.addLayer(new MatrixLayer(0.05, 1, 1, "identity"));
 
 		model.onIterationStarts(i -> System.out.printf("Iteration %d...\n", i+1));
 		model.onIterationEnds(it -> System.out.println("...finished\n"));
-		
 		
 		// Start training
 		model.prepareTraining(trainingSamples);
@@ -66,6 +73,7 @@ public class App {
 		      example.setLocationRelativeTo(null);  
 		      example.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);  
 		      example.setVisible(true);  
-		    });  
+		    });
+		new PerceptronAnd(1);
 	}
 }
