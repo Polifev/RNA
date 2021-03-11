@@ -3,6 +3,11 @@ package be.hepl.rna;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
+
+import be.hepl.rna.charts.RegressionChart;
 import be.hepl.rna.common.INeuralNetwork;
 import be.hepl.rna.common.ISample;
 import be.hepl.rna.common.impl.CommonLabeledSample;
@@ -40,5 +45,15 @@ public class App {
 			DoubleMatrix1D[] m = model.evaluate(s).getLayerOutputs();
 			System.out.println(m[m.length - 1]);
 		}
+		
+		RegressionChart chart = new RegressionChart("Scatter Chart Example");  
+		
+		SwingUtilities.invokeLater(() -> {
+		      JFrame example = chart.asJFrame();
+		      example.setSize(800, 600);  
+		      example.setLocationRelativeTo(null);  
+		      example.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);  
+		      example.setVisible(true);  
+		    });  
 	}
 }
