@@ -7,10 +7,12 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
-import be.hepl.rna.charts.RegressionChart;
+import be.hepl.rna.charts.ClassificationChart;
+import be.hepl.rna.common.ILabeledSample;
 import be.hepl.rna.common.INeuralNetwork;
 import be.hepl.rna.common.ISample;
 import be.hepl.rna.common.impl.CommonLabeledSample;
+import be.hepl.rna.matrix.MatrixClassificatorWrapper;
 import be.hepl.rna.matrix.MatrixLayer;
 import be.hepl.rna.matrix.MatrixNeuralNetwork;
 import be.hepl.rna.matrix.trainingmode.PerceptronTrainingMode;
@@ -26,7 +28,7 @@ public class PerceptronAnd {
 	public PerceptronAnd(int learningRate) {
 
 		// Initializing a list of samples
-		List<CommonLabeledSample> trainingSamples = new ArrayList<>();
+		List<ILabeledSample> trainingSamples = new ArrayList<>();
 		trainingSamples.add(new CommonLabeledSample(new double[] { 0.0, 0.0 }, new double[] { 0.0 }));
 		trainingSamples.add(new CommonLabeledSample(new double[] { 0.0, 1.0 }, new double[] { 0.0 }));
 		trainingSamples.add(new CommonLabeledSample(new double[] { 1.0, 0.0 }, new double[] { 0.0 }));
@@ -50,14 +52,18 @@ public class PerceptronAnd {
 			System.out.println(m[m.length - 1]);
 		}
 
-		RegressionChart chart = new RegressionChart("Scatter Chart Example");
+		ClassificationChart chart = new ClassificationChart("AND classification", new String[] {"False", "True"}, true);
+		chart.setClassificator(new MatrixClassificatorWrapper(model, 0.01),
+				-0.1, 1.1, 0.03,
+				-0.1, 1.1, 0.03);
+		chart.setData(trainingSamples);
 
 		SwingUtilities.invokeLater(() -> {
-			JFrame example = chart.asJFrame();
-			example.setSize(800, 600);
-			example.setLocationRelativeTo(null);
-			example.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-			example.setVisible(true);
+			JFrame chartFrame = chart.asJFrame();
+			chartFrame.setSize(800, 600);
+			chartFrame.setLocationRelativeTo(null);
+			chartFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+			chartFrame.setVisible(true);
 		});
 	}
 

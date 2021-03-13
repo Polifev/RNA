@@ -33,17 +33,17 @@ public class RegressionChart {
 		}
 	}
 	
+	public void setData(Iterable<ILabeledSample> data) {
+		for(ILabeledSample s : data) {
+			this.data.add(new XYDataItem(s.inputs()[0], s.expectedOutput()[0]));
+		}
+	}
+	
 	public JFrame asJFrame() {
 		XYSeriesCollection dataset = new XYSeriesCollection();
 		dataset.addSeries(data);
 		dataset.addSeries(regression);
 		return new Frame(this.title, dataset);
-	}
-	
-	public void setData(Iterable<ILabeledSample> data) {
-		for(ILabeledSample s : data) {
-			this.data.add(new XYDataItem(s.inputs()[0], s.expectedOutput()[0]));
-		}
 	}
 	
 	public static class Frame extends JFrame {
