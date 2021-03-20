@@ -16,7 +16,7 @@ import be.hepl.rna.examples.PerceptronAnd;
 import be.hepl.rna.matrix.MatrixLayer;
 import be.hepl.rna.matrix.MatrixModelWrapper;
 import be.hepl.rna.matrix.MatrixNeuralNetwork;
-import be.hepl.rna.matrix.trainingmode.PerceptronTrainingMode;
+import be.hepl.rna.matrix.trainingmode.AdalineTrainingMode;
 import cern.colt.matrix.DoubleMatrix1D;
 import cern.colt.matrix.DoubleMatrix2D;
 
@@ -46,7 +46,7 @@ public class App {
 		trainingSamples.add(new CommonLabeledSample(new double[] { 1.0, 1.0 }, new double[] { 1.0, 1.0, 0.0, 1.0 }));*/
 		
 		// Setting up the model
-		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(new PerceptronTrainingMode());
+		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(new AdalineTrainingMode());
 		model.addLayer(new MatrixLayer(0.05, 1, 1, "identity"));
 
 		model.onIterationStarts(i -> System.out.printf("Iteration %d...\n", i+1));

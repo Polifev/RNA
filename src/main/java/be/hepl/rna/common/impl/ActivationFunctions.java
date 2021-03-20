@@ -7,13 +7,19 @@ public class ActivationFunctions {
 	public static final Function<Double, Double> IDENTITY_DER = val -> 1.0;
 	
 	public static final Function<Double, Double> THRESHOLD = val -> val > 0 ? 1.0 : 0.0;
-
+	
+	public static final Function<Double,Double> SIGMOID = val -> 1 / 1 + Math.exp(-val);
+	public static final Function<Double,Double> SIGMOID_DER = val -> SIGMOID.apply(val) * (1 - SIGMOID.apply(val));
+	
+	
 	public static final Function<Double, Double> get(String name) {
 		switch (name.toLowerCase()) {
 		case "identity":
 			return IDENTITY;
 		case "threshold":
 			return THRESHOLD;
+		case "sigmoid": 
+			return SIGMOID;
 		default:
 			throw new IllegalArgumentException("No function called '" + name + "'");
 		}
@@ -23,6 +29,8 @@ public class ActivationFunctions {
 		switch (name.toLowerCase()) {
 		case "identity":
 			return IDENTITY_DER;
+		case "sigmoid":
+			return SIGMOID_DER;
 		default:
 			throw new IllegalArgumentException("No derivated function for '" + name + "'");
 		}
