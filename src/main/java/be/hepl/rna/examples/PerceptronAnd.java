@@ -54,8 +54,8 @@ public class PerceptronAnd {
 
 		ClassificationChart chart = new ClassificationChart("AND classification", new String[] {"False", "True"}, true);
 		chart.setClassificator(new MatrixClassificatorWrapper(model, 0.01),
-				-0.1, 1.1, 0.03,
-				-0.1, 1.1, 0.03);
+				-0.1, 1.1, 0.01,
+				-0.1, 1.1, 0.01);
 		chart.setData(trainingSamples);
 
 		SwingUtilities.invokeLater(() -> {

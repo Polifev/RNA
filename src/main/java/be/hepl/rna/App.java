@@ -9,6 +9,7 @@ import javax.swing.WindowConstants;
 
 import be.hepl.rna.charts.RegressionChart;
 import be.hepl.rna.common.ILabeledSample;
+import be.hepl.rna.common.ILabelledSampleSetProvider;
 import be.hepl.rna.common.INeuralNetwork;
 import be.hepl.rna.common.ISample;
 import be.hepl.rna.common.impl.CommonLabeledSample;
@@ -22,28 +23,26 @@ import cern.colt.matrix.DoubleMatrix2D;
 
 public class App {
 	public static void main(String[] args) {
-		// Initializing a list of samples
-		List<ILabeledSample> trainingSamples = new ArrayList<>();
-		trainingSamples.add(new CommonLabeledSample(new double[] { 0.0 }, new double[] { 0.0 }));
-		trainingSamples.add(new CommonLabeledSample(new double[] { 0.2 }, new double[] { 0.45 }));
-		trainingSamples.add(new CommonLabeledSample(new double[] { 0.3 }, new double[] { 0.55 }));
-		trainingSamples.add(new CommonLabeledSample(new double[] { 0.31 }, new double[] { 0.6 }));
-		trainingSamples.add(new CommonLabeledSample(new double[] { 0.4 }, new double[] { 0.79 }));
-		trainingSamples.add(new CommonLabeledSample(new double[] { 0.5 }, new double[] { 0.95 }));
-		trainingSamples.add(new CommonLabeledSample(new double[] { 0.1 }, new double[] { 0.21 }));
-		trainingSamples.add(new CommonLabeledSample(new double[] { 0.22 }, new double[] { 0.44 }));
-		trainingSamples.add(new CommonLabeledSample(new double[] { 0.31 }, new double[] { 0.67 }));
-		trainingSamples.add(new CommonLabeledSample(new double[] { 0.38 }, new double[] { 0.69 }));
-		trainingSamples.add(new CommonLabeledSample(new double[] { 0.44 }, new double[] { 0.79 }));
-		trainingSamples.add(new CommonLabeledSample(new double[] { 0.55 }, new double[] { 1.1 }));
+		ILabelledSampleSetProvider provider = () -> {
+			List<ILabeledSample> trainingSamples = new ArrayList<>();
+			trainingSamples.add(new CommonLabeledSample(new double[] { 0.0 }, new double[] { 0.0 }));
+			trainingSamples.add(new CommonLabeledSample(new double[] { 0.2 }, new double[] { 0.45 }));
+			trainingSamples.add(new CommonLabeledSample(new double[] { 0.3 }, new double[] { 0.55 }));
+			trainingSamples.add(new CommonLabeledSample(new double[] { 0.31 }, new double[] { 0.6 }));
+			trainingSamples.add(new CommonLabeledSample(new double[] { 0.4 }, new double[] { 0.79 }));
+			trainingSamples.add(new CommonLabeledSample(new double[] { 0.5 }, new double[] { 0.95 }));
+			trainingSamples.add(new CommonLabeledSample(new double[] { 0.1 }, new double[] { 0.21 }));
+			trainingSamples.add(new CommonLabeledSample(new double[] { 0.22 }, new double[] { 0.44 }));
+			trainingSamples.add(new CommonLabeledSample(new double[] { 0.31 }, new double[] { 0.67 }));
+			trainingSamples.add(new CommonLabeledSample(new double[] { 0.38 }, new double[] { 0.69 }));
+			trainingSamples.add(new CommonLabeledSample(new double[] { 0.44 }, new double[] { 0.79 }));
+			trainingSamples.add(new CommonLabeledSample(new double[] { 0.55 }, new double[] { 1.1 }));
+			return trainingSamples;
+		};
 		
-		/*List<CommonLabeledSample> trainingSamples = new ArrayList<>();
-		//																4 neurones =>     1         2        3    4
-		//																		     (x1 || x2) (x1 && x2) (!x1) (x2)
-		trainingSamples.add(new CommonLabeledSample(new double[] { 0.0, 0.0 }, new double[] { 0.0, 0.0, 1.0, 0.0 }));
-		trainingSamples.add(new CommonLabeledSample(new double[] { 0.0, 1.0 }, new double[] { 1.0, 0.0, 1.0, 1.0 }));
-		trainingSamples.add(new CommonLabeledSample(new double[] { 1.0, 0.0 }, new double[] { 1.0, 0.0, 0.0, 0.0 }));
-		trainingSamples.add(new CommonLabeledSample(new double[] { 1.0, 1.0 }, new double[] { 1.0, 1.0, 0.0, 1.0 }));*/
+		
+		// Initializing a list of samples
+		Iterable<ILabeledSample> trainingSamples = provider.getSamples();
 		
 		// Setting up the model
 		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(new PerceptronTrainingMode());
@@ -51,9 +50,9 @@ public class App {
 
 		model.onIterationStarts(i -> System.out.printf("Iteration %d...\n", i+1));
 		model.onIterationEnds(it -> System.out.println("...finished\n"));
-		
+				
 		// Start training
-		model.prepareTraining(trainingSamples);
+		model.prepareTraining(provider.getSamples());
 		model.train(10_000);
 		System.out.println("======TRAINED======");
 		

@@ -14,7 +14,6 @@ import be.hepl.rna.common.ISample;
 import be.hepl.rna.common.ISampleEvaluation;
 import be.hepl.rna.common.ITrainingMode;
 import be.hepl.rna.common.impl.ActivationFunctions;
-import be.hepl.rna.common.impl.CommonLabeledSample;
 import cern.colt.matrix.DoubleFactory1D;
 import cern.colt.matrix.DoubleMatrix1D;
 import cern.colt.matrix.DoubleMatrix2D;
