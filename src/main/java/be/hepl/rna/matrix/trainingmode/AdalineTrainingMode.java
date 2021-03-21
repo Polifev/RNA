@@ -30,7 +30,8 @@ public class AdalineTrainingMode implements ITrainingMode<DoubleMatrix1D, Double
 			
 			//Compute Error
 			DoubleMatrix1D error = sampleEvaluation.getExpectedOutput().copy().assign(sampleEvaluation.getLayerOutputs()[index + 1], MatrixFunctions.SUBSTRACTION);
-			double E = 1/2 * error.aggregate(MatrixFunctions.ADDITION, MatrixFunctions.SQR);// E = 1/2 * SUM(error^2)
+			double E = 1.0/2 * error.aggregate(MatrixFunctions.ADDITION, MatrixFunctions.SQR);// E = 1/2 * SUM(error^2)
+			//System.out.println("Loss: " + E);
 			
 			//Compute error signal on last layer
 			DoubleMatrix1D signalError = error.like();

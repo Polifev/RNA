@@ -29,17 +29,16 @@ public class MultiLayer2NonLinearSeparabilityClass {
 		
 		// Setting up the model
 		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(new AdalineTrainingMode());
-		model.addLayer(new MatrixLayer(0.5, 2, 3, "sigmoid"));
-		model.addLayer(new MatrixLayer(0.5, 3, 1, "sigmoid"));
+		model.addLayer(new MatrixLayer(0.50, 2, 2, "sigmoid"));
+		model.addLayer(new MatrixLayer(0.50, 2, 1, "sigmoid"));
 
 		model.onIterationStarts(i -> System.out.printf("Iteration %d...\n", i + 1));
-		model.onSampleProcessed(s -> System.out.printf("Sample processed: %s\n", s.getLayerOutputs()[s.getLayerOutputs().length - 1]));
 		
 		model.onIterationEnds(it -> System.out.println("...finished\n"));
 
 		// Start training
 		model.prepareTraining(trainingSamples);
-		model.train(200);
+		model.train(2000);
 		System.out.println("======TRAINED======");
 
 		// Check results

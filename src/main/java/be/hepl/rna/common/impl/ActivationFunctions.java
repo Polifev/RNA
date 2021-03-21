@@ -8,8 +8,11 @@ public class ActivationFunctions {
 	
 	public static final Function<Double, Double> THRESHOLD = val -> val > 0 ? 1.0 : 0.0;
 	
-	public static final Function<Double,Double> SIGMOID = val -> 1 / 1 + Math.exp(-val);
-	public static final Function<Double,Double> SIGMOID_DER = val -> SIGMOID.apply(val) * (1 - SIGMOID.apply(val));
+	public static final Function<Double,Double> SIGMOID = val -> 1 / (1 + Math.exp(-val));
+	public static final Function<Double,Double> SIGMOID_DER = val -> {
+		double sig = SIGMOID.apply(val);
+		return sig * (1 - sig);
+	};
 	
 	
 	public static final Function<Double, Double> get(String name) {
