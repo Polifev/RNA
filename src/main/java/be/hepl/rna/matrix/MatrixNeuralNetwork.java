@@ -73,7 +73,7 @@ public class MatrixNeuralNetwork implements INeuralNetwork<DoubleMatrix1D, Doubl
 				// Evaluate sample labeling
 				MatrixSampleEvaluation sampleEvaluation = evaluate(trainingInput.get(sampleIndex));
 				sampleEvaluation.setExpectedOutput(trainingOutput.get(sampleIndex));
-				
+				iteration.addTrainingResult(sampleEvaluation);
 				// Call the sample based training
 				trainingMode.sampleBasedWeightsCorrection(sampleEvaluation, this.layers);
 				sampleProcessedCallback.accept(sampleEvaluation);
@@ -127,6 +127,14 @@ public class MatrixNeuralNetwork implements INeuralNetwork<DoubleMatrix1D, Doubl
 			int currentIndex = previousIndex + 1; 
 			layerPotentials[currentIndex] = Algebra.DEFAULT.mult(layer.getWeights(), layerOutputs[previousIndex]);
 			layerOutputs[currentIndex] =  layerPotentials[currentIndex].assign((val) -> ActivationFunctions.get(layer.getActivationFunctionName()).apply(val));
+			
+			// Add imaginary input
+			if(currentIndex < this.layers.size() ) {
+				//layerPotentials[currentIndex] = expandWithImaginary(layerPotentials[currentIndex]);
+				layerOutputs[currentIndex] = expandWithImaginary(layerOutputs[currentIndex]);
+			}
+			
+			
 			previousIndex = currentIndex;
 		}
 		sampleEvaluation.setGivenInput(input);
@@ -138,5 +146,9 @@ public class MatrixNeuralNetwork implements INeuralNetwork<DoubleMatrix1D, Doubl
 	
 	private DoubleMatrix1D buildInputMatrix(double[] inputArr) {
 		return DoubleFactory1D.dense.append(IMAGINARY_INPUT, DoubleFactory1D.dense.make(inputArr));
+	}
+	
+	private DoubleMatrix1D expandWithImaginary(DoubleMatrix1D matrix) {
+		return DoubleFactory1D.dense.append(IMAGINARY_INPUT, matrix);
 	}
 }
