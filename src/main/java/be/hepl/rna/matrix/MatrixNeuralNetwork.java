@@ -126,7 +126,7 @@ public class MatrixNeuralNetwork implements INeuralNetwork<DoubleMatrix1D, Doubl
 		for (ILayer<DoubleMatrix2D> layer : this.layers) {
 			int currentIndex = previousIndex + 1; 
 			layerPotentials[currentIndex] = Algebra.DEFAULT.mult(layer.getWeights(), layerOutputs[previousIndex]);
-			layerOutputs[currentIndex] =  layerPotentials[currentIndex].assign((val) -> ActivationFunctions.get(layer.getActivationFunctionName()).apply(val));
+			layerOutputs[currentIndex] =  layerPotentials[currentIndex].copy().assign((val) -> ActivationFunctions.get(layer.getActivationFunctionName()).apply(val));
 			
 			// Add imaginary input
 			if(currentIndex < this.layers.size() ) {

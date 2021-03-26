@@ -22,48 +22,44 @@ public class AdalineTrainingMode implements ITrainingMode<DoubleMatrix1D, Double
 	@Override
 	public void sampleBasedWeightsCorrection(ISampleEvaluation<DoubleMatrix1D> sampleEvaluation, List<ILayer<DoubleMatrix2D>> layers) {
 		if(layers.size() > 1) {
-			// Backpropagation
+			// Back-propagation
 			
 			//Start from last layer
-			int index = layers.size() - 1;
-			ILayer<DoubleMatrix2D> lastLayer = layers.get(index);
+			int lastLayerIndex = layers.size() - 1;
+			ILayer<DoubleMatrix2D> lastLayer = layers.get(lastLayerIndex);
 			
 			//Compute Error
-			DoubleMatrix1D error = sampleEvaluation.getExpectedOutput().copy().assign(sampleEvaluation.getLayerOutputs()[index + 1], MatrixFunctions.SUBSTRACTION);
+			DoubleMatrix1D error = sampleEvaluation.getExpectedOutput().copy().assign(sampleEvaluation.getLayerOutputs()[lastLayerIndex + 1], MatrixFunctions.SUBSTRACTION);
+
 			double E = 1.0/2 * error.aggregate(MatrixFunctions.ADDITION, MatrixFunctions.SQR);// E = 1/2 * SUM(error^2)
 			//System.out.println("Loss: " + E);
 			
-			//Compute error signal on last layer
-			DoubleMatrix1D signalError = error.like();
+			//Compute signal error = (err * f'(potential) )
+			DoubleMatrix1D signalError = sampleEvaluation.getLayerPotentials()[lastLayerIndex + 1].copy();
+			signalError.assign(v -> ActivationFunctions.getDerivated(lastLayer.getActivationFunctionName()).apply(v));
+			signalError.assign(error, MatrixFunctions.PRODUCT);
 			
-			//Compute potentials in derivated function
-			DoubleMatrix1D potentialsValues = sampleEvaluation.getLayerPotentials()[index + 1];
-			potentialsValues.assign(v -> ActivationFunctions.getDerivated(lastLayer.getActivationFunctionName()).apply(v));
-			
-			signalError = potentialsValues.assign(error, MatrixFunctions.PRODUCT);
 			DoubleMatrix1D[] signalErrors = new DoubleMatrix1D[layers.size()];
-			signalErrors[index] = signalError;// Array of signal error corresponding to each layer
+			signalErrors[lastLayerIndex] = signalError;// Array of signal error corresponding to each layer
 			
 			//Hidden layers
-			for(int i = index-1 ; i >= 0 ; i--) {
+			for(int i = lastLayerIndex-1 ; i >= 0 ; i--) {
 				//Compute error in hidden layer
 				ILayer<DoubleMatrix2D> nextLayer = layers.get(i+1);
-				DoubleMatrix2D weights = nextLayer.getWeights();
-				DoubleMatrix2D transposedweights = Algebra.DEFAULT.transpose(weights.copy().viewPart(0, 1, weights.rows(), weights.columns()-1));
+				DoubleMatrix2D weights = nextLayer.getWeights().copy();
+				DoubleMatrix2D transposedweights = Algebra.DEFAULT.transpose(weights.viewPart(0, 1, weights.rows(), weights.columns()-1));
 				DoubleMatrix1D hiddenError = Algebra.DEFAULT.mult(transposedweights, signalError);
 				
 				//Compute potentials in derivated function
-				potentialsValues = sampleEvaluation.getLayerPotentials()[i + 1];
-				potentialsValues.assign(v -> ActivationFunctions.getDerivated(lastLayer.getActivationFunctionName()).apply(v));
-				
-				DoubleMatrix1D hiddenSignalError = hiddenError.assign(potentialsValues, MatrixFunctions.PRODUCT);
-				
-				signalError = hiddenSignalError;
-				signalErrors[i] = hiddenSignalError;
+				signalError = sampleEvaluation.getLayerPotentials()[i + 1].copy();
+				signalError.assign(v -> ActivationFunctions.getDerivated(lastLayer.getActivationFunctionName()).apply(v));
+				signalError.assign(hiddenError, MatrixFunctions.PRODUCT);
+						
+				signalErrors[i] = signalError;
 			}
 			
 			//Updating Weights
-			for(int i = index ; i >= 0 ; i--) {
+			for(int i = lastLayerIndex ; i >= 0 ; i--) {
 				ILayer<DoubleMatrix2D> layer = layers.get(i);
 				DoubleMatrix2D weights = layer.getWeights();
 				

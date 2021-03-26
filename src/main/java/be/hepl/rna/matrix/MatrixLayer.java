@@ -1,8 +1,7 @@
 package be.hepl.rna.matrix;
 
-import java.util.Random;
-
 import be.hepl.rna.common.ILayer;
+import be.hepl.rna.common.IWeightsInitializer;
 import cern.colt.matrix.DoubleFactory2D;
 import cern.colt.matrix.DoubleMatrix2D;
 
@@ -17,17 +16,15 @@ public class MatrixLayer implements ILayer<DoubleMatrix2D> {
 	 * @param outputSize
 	 * @param activationFunction
 	 */
-	public MatrixLayer(double learningRate, int inputSize, int outputSize, String activationFunctionName) {
+	public MatrixLayer(double learningRate, int inputSize, int outputSize, String activationFunctionName, IWeightsInitializer weightsInitializer) {
 		this.learningRate = learningRate;
 		this.weights = DoubleFactory2D.dense.make(outputSize, inputSize+1);
 		
-		Random r = new Random();
 		for(int i = 0; i < outputSize; i++) {
 			for(int j = 0; j < inputSize+1; j++) {
-				this.weights.setQuick(i, j, r.nextGaussian());
+				this.weights.setQuick(i, j, weightsInitializer.getWeight(i, j));
 			}
 		}
-		System.out.println(this.weights);
 		
 		this.activationFunctionName = activationFunctionName;
 	}

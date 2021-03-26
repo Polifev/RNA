@@ -12,6 +12,7 @@ import be.hepl.rna.common.ILabeledSample;
 import be.hepl.rna.common.INeuralNetwork;
 import be.hepl.rna.common.ISample;
 import be.hepl.rna.common.impl.CommonLabeledSample;
+import be.hepl.rna.common.impl.ZeroWeightsInitializer;
 import be.hepl.rna.matrix.MatrixLayer;
 import be.hepl.rna.matrix.MatrixModelWrapper;
 import be.hepl.rna.matrix.MatrixNeuralNetwork;
@@ -39,7 +40,7 @@ public class RegressionARenomerFDP {
 				
 		// Setting up the model
 		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(new AdalineTrainingMode());
-		model.addLayer(new MatrixLayer(0.05, 1, 1, "identity"));
+		model.addLayer(new MatrixLayer(0.05, 1, 1, "identity", new ZeroWeightsInitializer()));
 
 		model.onIterationStarts(i -> System.out.printf("Iteration %d...\n", i+1));
 		model.onIterationEnds(it -> System.out.println("...finished\n"));

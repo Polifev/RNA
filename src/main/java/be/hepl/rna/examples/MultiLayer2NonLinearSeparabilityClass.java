@@ -9,13 +9,13 @@ import javax.swing.WindowConstants;
 import be.hepl.rna.charts.ClassificationChart;
 import be.hepl.rna.common.ILabeledSample;
 import be.hepl.rna.common.INeuralNetwork;
+import be.hepl.rna.common.impl.ZeroWeightsInitializer;
 import be.hepl.rna.io.CsvSampleImporter;
 import be.hepl.rna.io.ISampleImporter;
 import be.hepl.rna.matrix.MatrixClassificatorWrapper;
 import be.hepl.rna.matrix.MatrixLayer;
 import be.hepl.rna.matrix.MatrixNeuralNetwork;
 import be.hepl.rna.matrix.trainingmode.AdalineTrainingMode;
-import cern.colt.Arrays;
 import cern.colt.matrix.DoubleMatrix1D;
 import cern.colt.matrix.DoubleMatrix2D;
 
@@ -29,8 +29,8 @@ public class MultiLayer2NonLinearSeparabilityClass {
 		
 		// Setting up the model
 		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(new AdalineTrainingMode());
-		model.addLayer(new MatrixLayer(0.50, 2, 2, "sigmoid"));
-		model.addLayer(new MatrixLayer(0.50, 2, 1, "sigmoid"));
+		model.addLayer(new MatrixLayer(0.50, 2, 2, "sigmoid", new ZeroWeightsInitializer()));
+		model.addLayer(new MatrixLayer(0.50, 2, 1, "sigmoid", new ZeroWeightsInitializer()));
 
 		model.onIterationStarts(i -> System.out.printf("Iteration %d...\n", i + 1));
 		
@@ -38,7 +38,7 @@ public class MultiLayer2NonLinearSeparabilityClass {
 
 		// Start training
 		model.prepareTraining(trainingSamples);
-		model.train(2000);
+		model.train(100);
 		System.out.println("======TRAINED======");
 
 		// Check results
