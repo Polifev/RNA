@@ -145,7 +145,7 @@ public class MatrixNeuralNetwork implements INeuralNetwork<DoubleMatrix1D, Doubl
 	}
 	
 	private DoubleMatrix1D buildInputMatrix(double[] inputArr) {
-		return DoubleFactory1D.dense.append(IMAGINARY_INPUT, DoubleFactory1D.dense.make(inputArr));
+		return expandWithImaginary(DoubleFactory1D.dense.make(inputArr));
 	}
 	
 	private DoubleMatrix1D expandWithImaginary(DoubleMatrix1D matrix) {

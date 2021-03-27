@@ -8,7 +8,7 @@ public class ActivationFunctions {
 	
 	public static final Function<Double, Double> THRESHOLD = val -> val > 0 ? 1.0 : 0.0;
 	
-	public static final Function<Double,Double> SIGMOID = val -> 1 / (1 + Math.exp(-val));
+	public static final Function<Double,Double> SIGMOID = val -> 1.0 / (1 + Math.exp(-val));
 	public static final Function<Double,Double> SIGMOID_DER = val -> {
 		double sig = SIGMOID.apply(val);
 		return sig * (1 - sig);
