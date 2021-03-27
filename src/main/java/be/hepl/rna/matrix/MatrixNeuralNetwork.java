@@ -28,7 +28,6 @@ public class MatrixNeuralNetwork implements INeuralNetwork<DoubleMatrix1D, Doubl
 
 	// Layers (ordered in two ways)
 	private List<ILayer<DoubleMatrix2D>> layers = new LinkedList<>();
-	private List<ILayer<DoubleMatrix2D>> reverseLayers = new LinkedList<>();
 
 	// Training mode
 	private ITrainingMode<DoubleMatrix1D, DoubleMatrix2D> trainingMode;
@@ -46,7 +45,6 @@ public class MatrixNeuralNetwork implements INeuralNetwork<DoubleMatrix1D, Doubl
 	@Override
 	public void addLayer(ILayer<DoubleMatrix2D> layer) {
 		layers.add(layer);
-		reverseLayers.add(0, layer);
 	}
 
 	@Override

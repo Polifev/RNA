@@ -1,7 +1,6 @@
 package be.hepl.rna.examples;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -13,7 +12,6 @@ import be.hepl.rna.common.ILabeledSample;
 import be.hepl.rna.common.INeuralNetwork;
 import be.hepl.rna.common.impl.CommonLabeledSample;
 import be.hepl.rna.common.impl.GaussianWeightsInitializer;
-import be.hepl.rna.common.impl.ZeroWeightsInitializer;
 import be.hepl.rna.matrix.MatrixClassificatorWrapper;
 import be.hepl.rna.matrix.MatrixLayer;
 import be.hepl.rna.matrix.MatrixNeuralNetwork;
@@ -32,8 +30,8 @@ public class MultilayerXor {
 			
 			// Setting up the model
 			INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(new AdalineTrainingMode());
-			model.addLayer(new MatrixLayer(0.5, 2, 5, "sigmoid", new ZeroWeightsInitializer()));
-			model.addLayer(new MatrixLayer(0.5, 5, 1, "sigmoid", new ZeroWeightsInitializer()));
+			model.addLayer(new MatrixLayer(0.5, 2, 2, "sigmoid", new GaussianWeightsInitializer()));
+			model.addLayer(new MatrixLayer(0.5, 2, 1, "sigmoid", new GaussianWeightsInitializer()));
 	
 			model.onIterationStarts(i -> System.out.printf("Iteration %d...\n", i + 1));
 			
@@ -41,10 +39,12 @@ public class MultilayerXor {
 	
 			// Start training
 			model.prepareTraining(trainingSamples);
-			model.train(50000);
+			model.train(10000);
+			
 			System.out.println("======TRAINED======");
 			
-			for(int i = 0; i < 4; i++) {
+			for(int i = 0; i < trainingSamples.size(); i++) {
+				System.out.println(model.evaluate(trainingSamples.get(i)).getLayerPotentials()[2]);
 				System.out.println(model.evaluate(trainingSamples.get(i)).getLayerOutputs()[2]);
 			}
 			

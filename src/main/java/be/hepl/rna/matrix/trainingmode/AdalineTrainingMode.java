@@ -31,8 +31,7 @@ public class AdalineTrainingMode implements ITrainingMode<DoubleMatrix1D, Double
 			//Compute Error
 			DoubleMatrix1D error = sampleEvaluation.getExpectedOutput().copy().assign(sampleEvaluation.getLayerOutputs()[lastLayerIndex + 1], MatrixFunctions.SUBSTRACTION);
 
-			double E = 1.0/2 * error.aggregate(MatrixFunctions.ADDITION, MatrixFunctions.SQR);// E = 1/2 * SUM(error^2)
-			//System.out.println("Loss: " + E);
+			//double E = 1.0/2 * error.aggregate(MatrixFunctions.ADDITION, MatrixFunctions.SQR);// E = 1/2 * SUM(error^2)
 			
 			//Compute signal error = (err * f'(potential) )
 			DoubleMatrix1D signalError = sampleEvaluation.getLayerPotentials()[lastLayerIndex + 1].copy();
@@ -73,7 +72,7 @@ public class AdalineTrainingMode implements ITrainingMode<DoubleMatrix1D, Double
 				weights.assign(correction, MatrixFunctions.ADDITION);
 			}
 			
-		} else {
+		} else {			
 			ILayer<DoubleMatrix2D> l = layers.get(0);
 			
 			// Compute the error
