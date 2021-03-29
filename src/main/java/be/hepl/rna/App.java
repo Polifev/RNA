@@ -1,11 +1,15 @@
 package be.hepl.rna;
 
-import be.hepl.rna.examples.MultiLayer2NonLinearSeparabilityClass;
-import be.hepl.rna.examples.MultilayerXor;
+import be.hepl.rna.examples.MonoNeuronExamples;
+import be.hepl.rna.examples.MultilayerExamples;
 
 public class App {
 	public static void main(String[] args) {
-		new MultiLayer2NonLinearSeparabilityClass("C:\\Users\\Pol\\Desktop\\RNA_DATA\\table_4_12.csv");
-		//new MultilayerXor();
+		MonoNeuronExamples.and();
+		MultilayerExamples.xor();
+		MultilayerExamples.twoClassesSeparation();
+		MonoNeuronExamples.table2_9();
+		MonoNeuronExamples.table2_10();
+		MonoNeuronExamples.table2_11();
 	}
 }

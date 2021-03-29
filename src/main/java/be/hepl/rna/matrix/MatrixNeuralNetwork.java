@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import javax.naming.OperationNotSupportedException;
+
 import be.hepl.rna.common.IIterationEvaluation;
 import be.hepl.rna.common.ILabeledSample;
 import be.hepl.rna.common.ILayer;
@@ -58,7 +60,7 @@ public class MatrixNeuralNetwork implements INeuralNetwork<DoubleMatrix1D, Doubl
 	}
 
 	@Override
-	public void train(int iterationCount) {
+	public void train(int iterationCount) throws OperationNotSupportedException {
 		boolean earlyStopped = false;
 		
 		// For each iterations
@@ -107,6 +109,11 @@ public class MatrixNeuralNetwork implements INeuralNetwork<DoubleMatrix1D, Doubl
 	@Override
 	public void setEarlyStoppingCondition(Predicate<IIterationEvaluation<DoubleMatrix1D>> condition) {
 		this.earlyStoppingCondition = condition;
+	}
+	
+	@Override
+	public String generateReport() {
+		return "";
 	}
 	
 	private MatrixSampleEvaluation evaluate(DoubleMatrix1D input) {

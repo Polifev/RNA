@@ -1,10 +1,8 @@
 package be.hepl.rna.io;
 
 import java.io.BufferedReader;
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,17 +13,18 @@ import be.hepl.rna.common.impl.CommonSample;
 
 public class CsvSampleImporter implements ISampleImporter {
 
-	private final String path, separator;
+	private final InputStream in;
+	private final String separator;
 	
-	public CsvSampleImporter(String path, String separator) {
-		this.path = path;
+	public CsvSampleImporter(InputStream in, String separator) {
+		this.in = in;
 		this.separator = separator;
 	}
 	
 	@Override
 	public List<ILabeledSample> importSample(int outputIndex) {
 		List<ILabeledSample> samples = new LinkedList<ILabeledSample>();
-		try(BufferedReader reader = new BufferedReader(Files.newBufferedReader(Paths.get(path)))){
+		try(BufferedReader reader = new BufferedReader(new InputStreamReader(in))){
 			while(reader.ready()) {
 				String line = reader.readLine();
 				String[] values = line.split(separator);
@@ -40,7 +39,7 @@ public class CsvSampleImporter implements ISampleImporter {
 				samples.add(new CommonLabeledSample(input, output));
 			}
 		} catch (Exception e) {
-			System.out.println("SampleImporter > Erreur lors de la lecture : " + path);
+			System.out.println("SampleImporter > Erreur lors de la lecture");
 		}
 		return samples;
 	}
@@ -49,7 +48,7 @@ public class CsvSampleImporter implements ISampleImporter {
 	public List<ISample> importSample() {
 		List<ISample> samples = new LinkedList<ISample>();
 		double[] input = null;
-		try(BufferedReader reader = new BufferedReader(Files.newBufferedReader(Paths.get(path)))){
+		try(BufferedReader reader = new BufferedReader(new InputStreamReader(in))){
 			while(reader.ready()) {
 				String line = reader.readLine();
 				String[] values = line.split(separator);
@@ -60,7 +59,7 @@ public class CsvSampleImporter implements ISampleImporter {
 				samples.add(new CommonSample(input));
 			}
 		} catch (Exception e) {
-			System.out.println("SampleImporter > Erreur lors de la lecture : " + path);
+			System.out.println("SampleImporter > Erreur lors de la lecture");
 		}
 		return samples;
 	}
