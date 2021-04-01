@@ -33,7 +33,7 @@ public class MonoLayerExamples {
 
 		// Setting up the model
 		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(new AdalineTrainingMode());
-		model.addLayer(new MatrixLayer(0.50, 2, 3, "identity", new GaussianWeightsInitializer()));
+		model.addLayer(new MatrixLayer(0.01, 2, 3, "identity", new ZeroWeightsInitializer()));
 
 		model.onIterationStarts(i -> System.out.printf("Iteration %d...\n", i + 1));
 		model.onIterationEnds(it -> System.out.println("...finished\n"));
@@ -50,7 +50,7 @@ public class MonoLayerExamples {
 			// Show results
 			ClassificationChart chart = new ClassificationChart("Three class linear separation",
 					new String[] { "No class", "Class 1", "Class 2", "Class 3" }, true);
-			chart.setClassificator(new MatrixClassificatorWrapper(model, 0.5), -2, 4, 0.03, -2, 8, 0.03);
+			chart.setClassificator(new MatrixClassificatorWrapper(model, 0.5), -2, 4, 0.1, -2, 8, 0.1);
 			chart.setData(trainingSamples);
 
 			SwingUtilities.invokeLater(() -> {
@@ -60,6 +60,38 @@ public class MonoLayerExamples {
 				chartFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 				chartFrame.setVisible(true);
 			});
+		} catch (OperationNotSupportedException e) {
+			System.err.println(e.getMessage());
+		}
+	}
+
+	public static void table3_5() {
+		final int MAX_IT = 10_000;
+
+		// Initializing a list of samples
+		ISampleImporter importer = new CsvSampleImporter(
+				MultilayerExamples.class.getResourceAsStream("/table_3_5.csv"), ",");
+		List<ILabeledSample> trainingSamples = importer.importSample(25);
+
+		// Setting up the model
+		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(new AdalineTrainingMode());
+		model.addLayer(new MatrixLayer(0.01, 25, 4, "identity", new ZeroWeightsInitializer()));
+
+		model.onIterationStarts(i -> System.out.printf("Iteration %d...\n", i + 1));
+		model.onIterationEnds(it -> System.out.println("...finished\n"));
+
+		// TODO condition d'arrêt spécifique
+
+		// Start training
+		model.prepareTraining(trainingSamples);
+
+		try {
+			model.train(MAX_IT);
+			System.out.println("======TRAINED======");
+
+			// Show results
+			// TODO show error, loss, weights or something else ???
+			
 		} catch (OperationNotSupportedException e) {
 			System.err.println(e.getMessage());
 		}
