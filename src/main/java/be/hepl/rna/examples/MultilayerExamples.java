@@ -22,6 +22,7 @@ import be.hepl.rna.matrix.MatrixLayer;
 import be.hepl.rna.matrix.MatrixModelWrapper;
 import be.hepl.rna.matrix.MatrixNeuralNetwork;
 import be.hepl.rna.matrix.trainingmode.AdalineTrainingMode;
+import be.hepl.rna.matrix.trainingmode.GradientDescendTrainingMode;
 import cern.colt.matrix.DoubleMatrix1D;
 import cern.colt.matrix.DoubleMatrix2D;
 
@@ -152,16 +153,16 @@ public class MultilayerExamples {
 	}
 
 	public static void table4_17() {
-		// TODO change it for FULL_BATCH + tanh
+		// TODO change it for FULL_BATCH
 		
 		// Initializing a list of samples
 		List<ILabeledSample> trainingSamples = new CsvSampleImporter(
 				MonoNeuronExamples.class.getResourceAsStream("/table_4_17.csv"), ",").importSample(1);
 
 		// Setting up the model
-		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(new AdalineTrainingMode());
-		model.addLayer(new MatrixLayer(0.001, 1, 2, "sigmoid", new GaussianWeightsInitializer()));
-		model.addLayer(new MatrixLayer(0.005, 2, 1, "identity", new GaussianWeightsInitializer()));
+		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(new GradientDescendTrainingMode());
+		model.addLayer(new MatrixLayer(0.00005, 1, 8, "tanh", new GaussianWeightsInitializer(0,1)));
+		model.addLayer(new MatrixLayer(0.00005, 8, 1, "identity", new GaussianWeightsInitializer(0,1)));
 
 		model.onIterationStarts(i -> System.out.printf("Iteration %d...\n", i + 1));
 		model.onIterationEnds(it -> System.out.println("...finished\n"));
@@ -169,20 +170,23 @@ public class MultilayerExamples {
 		// Start training
 		model.prepareTraining(trainingSamples);
 		try {
-			model.train(100_000);
-			System.out.println("======TRAINED======");
-
-			RegressionChart chart = new RegressionChart("Table 4.17");
-			chart.setLinearModel(new MatrixModelWrapper(model), -1.5, 0.75, 0.005);
-			chart.setData(trainingSamples);
-
-			SwingUtilities.invokeLater(() -> {
-				JFrame chartFrame = chart.asJFrame();
-				chartFrame.setSize(800, 600);
-				chartFrame.setLocationRelativeTo(null);
-				chartFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-				chartFrame.setVisible(true);
-			});
+			int step = 2_000;
+			for(int i = 0; i <= 50; i++) {
+				RegressionChart chart = new RegressionChart(String.format("%d iterations", (i)*step));
+				chart.setLinearModel(new MatrixModelWrapper(model), -2, 2, 0.02);
+				chart.setData(trainingSamples);
+	
+				SwingUtilities.invokeLater(() -> {
+					JFrame chartFrame = chart.asJFrame();
+					chartFrame.setSize(500, 500);
+					chartFrame.setLocationRelativeTo(null);
+					chartFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+					chartFrame.setVisible(true);
+				});
+				
+				model.train(step);
+				System.out.println("======TRAINED======");
+			}
 		} catch (OperationNotSupportedException e) {
 			System.err.println(e.getMessage());
 		}

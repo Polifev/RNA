@@ -14,6 +14,11 @@ public class ActivationFunctions {
 		return sig * (1 - sig);
 	};
 	
+	public static final Function<Double, Double> TANH = val -> Math.tanh(val);
+	public static final Function<Double, Double> TANH_DER = val -> {
+		double tanh = TANH.apply(val);
+		return 1 - tanh*tanh;
+	};
 	
 	public static final Function<Double, Double> get(String name) {
 		switch (name.toLowerCase()) {
@@ -23,6 +28,8 @@ public class ActivationFunctions {
 			return THRESHOLD;
 		case "sigmoid": 
 			return SIGMOID;
+		case "tanh":
+			return TANH;
 		default:
 			throw new IllegalArgumentException("No function called '" + name + "'");
 		}
@@ -34,6 +41,8 @@ public class ActivationFunctions {
 			return IDENTITY_DER;
 		case "sigmoid":
 			return SIGMOID_DER;
+		case "tanh":
+			return TANH_DER;
 		default:
 			throw new IllegalArgumentException("No derivated function for '" + name + "'");
 		}
