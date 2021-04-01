@@ -62,7 +62,7 @@ public class MultilayerExamples {
 		}
 	}
 
-	public static void twoClassesSeparation() {
+	public static void table4_12() {
 		final int MAX_IT = 10_000;
 
 		// Initializing a list of samples
