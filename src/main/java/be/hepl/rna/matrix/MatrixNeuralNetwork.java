@@ -81,8 +81,12 @@ public class MatrixNeuralNetwork implements INeuralNetwork<DoubleMatrix1D, Doubl
 			
 			// Call the iteration based training
 			trainingMode.iterationBasedWeightsCorrection(iteration, layers);
-			iterationEndsCallback.accept(iteration);
+			
+			// Try earlyStoppingCondition
 			earlyStopped = earlyStoppingCondition.test(iteration);
+			
+			// Call the iteration end callback
+			iterationEndsCallback.accept(iteration);
 		}
 	}
 	

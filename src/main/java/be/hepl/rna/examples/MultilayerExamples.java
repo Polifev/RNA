@@ -21,6 +21,7 @@ import be.hepl.rna.matrix.MatrixClassificatorWrapper;
 import be.hepl.rna.matrix.MatrixLayer;
 import be.hepl.rna.matrix.MatrixModelWrapper;
 import be.hepl.rna.matrix.MatrixNeuralNetwork;
+import be.hepl.rna.matrix.stopconditions.LossCondition;
 import be.hepl.rna.matrix.trainingmode.AdalineTrainingMode;
 import be.hepl.rna.matrix.trainingmode.GradientDescendTrainingMode;
 import cern.colt.matrix.DoubleMatrix1D;
@@ -92,7 +93,7 @@ public class MultilayerExamples {
 			System.out.println("======TRAINED======");
 
 			// Show results
-			ClassificationChart chart = new ClassificationChart("Non-linearly-dependent, three-classes segregation",
+			ClassificationChart chart = new ClassificationChart("Non-linearly-dependent, two-classes segregation",
 					new String[] { "1", "0" }, true);
 			chart.setClassificator(new MatrixClassificatorWrapper(model, 0.5), -2, 2, 0.03, -2, 2, 0.03);
 			chart.setData(trainingSamples);
@@ -135,7 +136,7 @@ public class MultilayerExamples {
 			System.out.println("======TRAINED======");
 
 			// Show results
-			ClassificationChart chart = new ClassificationChart("Non-linearly-dependent, two-classes segregation",
+			ClassificationChart chart = new ClassificationChart("Non-linearly-dependent, three-classes segregation",
 					new String[] { "No class", "Class 1", "Class 2", "Class 3" }, true);
 			chart.setClassificator(new MatrixClassificatorWrapper(model, 0.5), -2, 2, 0.03, -2, 2, 0.03);
 			chart.setData(trainingSamples);
@@ -154,39 +155,39 @@ public class MultilayerExamples {
 
 	public static void table4_17() {
 		// TODO change it for FULL_BATCH
-		
+
 		// Initializing a list of samples
 		List<ILabeledSample> trainingSamples = new CsvSampleImporter(
 				MonoNeuronExamples.class.getResourceAsStream("/table_4_17.csv"), ",").importSample(1);
 
 		// Setting up the model
-		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(new GradientDescendTrainingMode());
-		model.addLayer(new MatrixLayer(0.00005, 1, 8, "tanh", new GaussianWeightsInitializer(0,1)));
-		model.addLayer(new MatrixLayer(0.00005, 8, 1, "identity", new GaussianWeightsInitializer(0,1)));
+		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(
+				new GradientDescendTrainingMode());
+		model.addLayer(new MatrixLayer(0.0001, 1, 6, "tanh", new GaussianWeightsInitializer(0, 1)));
+		model.addLayer(new MatrixLayer(0.0001, 6, 1, "identity", new GaussianWeightsInitializer(0, 1)));
 
 		model.onIterationStarts(i -> System.out.printf("Iteration %d...\n", i + 1));
 		model.onIterationEnds(it -> System.out.println("...finished\n"));
 
+		model.setEarlyStoppingCondition(new LossCondition(20.0));
+		
 		// Start training
 		model.prepareTraining(trainingSamples);
 		try {
-			int step = 2_000;
-			for(int i = 0; i <= 50; i++) {
-				RegressionChart chart = new RegressionChart(String.format("%d iterations", (i)*step));
-				chart.setLinearModel(new MatrixModelWrapper(model), -2, 2, 0.02);
-				chart.setData(trainingSamples);
-	
-				SwingUtilities.invokeLater(() -> {
-					JFrame chartFrame = chart.asJFrame();
-					chartFrame.setSize(500, 500);
-					chartFrame.setLocationRelativeTo(null);
-					chartFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-					chartFrame.setVisible(true);
-				});
-				
-				model.train(step);
-				System.out.println("======TRAINED======");
-			}
+			model.train(100_000);
+			System.out.println("======TRAINED======");
+			RegressionChart chart = new RegressionChart(String.format("Multilayer regression"));
+			chart.setLinearModel(new MatrixModelWrapper(model), -2, 2, 0.02);
+			chart.setData(trainingSamples);
+
+			SwingUtilities.invokeLater(() -> {
+				JFrame chartFrame = chart.asJFrame();
+				chartFrame.setSize(500, 500);
+				chartFrame.setLocationRelativeTo(null);
+				chartFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+				chartFrame.setVisible(true);
+			});
+
 		} catch (OperationNotSupportedException e) {
 			System.err.println(e.getMessage());
 		}
