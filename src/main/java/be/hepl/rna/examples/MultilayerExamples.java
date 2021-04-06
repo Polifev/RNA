@@ -14,16 +14,16 @@ import be.hepl.rna.common.ILabeledSample;
 import be.hepl.rna.common.INeuralNetwork;
 import be.hepl.rna.common.impl.CommonLabeledSample;
 import be.hepl.rna.common.impl.GaussianWeightsInitializer;
-import be.hepl.rna.common.impl.ZeroWeightsInitializer;
 import be.hepl.rna.io.CsvSampleImporter;
 import be.hepl.rna.io.ISampleImporter;
 import be.hepl.rna.matrix.MatrixClassificatorWrapper;
 import be.hepl.rna.matrix.MatrixLayer;
 import be.hepl.rna.matrix.MatrixModelWrapper;
 import be.hepl.rna.matrix.MatrixNeuralNetwork;
+import be.hepl.rna.matrix.stopconditions.AccuracyCondition;
 import be.hepl.rna.matrix.stopconditions.LossCondition;
 import be.hepl.rna.matrix.trainingmode.AdalineTrainingMode;
-import be.hepl.rna.matrix.trainingmode.GradientDescendTrainingMode;
+import be.hepl.rna.matrix.trainingmode.FullBatchGradientDescentTrainingMode;
 import cern.colt.matrix.DoubleMatrix1D;
 import cern.colt.matrix.DoubleMatrix2D;
 
@@ -37,19 +37,21 @@ public class MultilayerExamples {
 		trainingSamples.add(new CommonLabeledSample(new double[] { 1, 1 }, new double[] { 0 }));
 
 		// Setting up the model
-		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(new AdalineTrainingMode());
-		model.addLayer(new MatrixLayer(0.8, 2, 2, "sigmoid", new GaussianWeightsInitializer()));
-		model.addLayer(new MatrixLayer(0.8, 2, 1, "sigmoid", new GaussianWeightsInitializer()));
+		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(new FullBatchGradientDescentTrainingMode());
+		model.addLayer(new MatrixLayer(0.8, 2, 2, "tanh", new GaussianWeightsInitializer()));
+		model.addLayer(new MatrixLayer(0.4, 2, 1, "sigmoid", new GaussianWeightsInitializer()));
 
 		model.onIterationStarts(i -> System.out.printf("Iteration %d...\n", i + 1));
 
 		model.onIterationEnds(it -> System.out.println("...finished\n"));
+		
+		model.setEarlyStoppingCondition(new AccuracyCondition(1.0, 0.1));
 
 		// Start training
 		model.prepareTraining(trainingSamples);
 
 		try {
-			model.train(2000);
+			model.train(10_000);
 			System.out.println("======TRAINED======");
 			// Check results
 			ClassificationChart chart = new ClassificationChart("XOR", new String[] { "False", "True" }, true);
@@ -57,7 +59,7 @@ public class MultilayerExamples {
 			chart.setData(trainingSamples);
 			SwingUtilities.invokeLater(() -> {
 				JFrame chartFrame = chart.asJFrame();
-				chartFrame.setSize(800, 600);
+				chartFrame.setSize(500, 500);
 				chartFrame.setLocationRelativeTo(null);
 				chartFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 				chartFrame.setVisible(true);
@@ -83,7 +85,7 @@ public class MultilayerExamples {
 		model.onIterationStarts(i -> System.out.printf("Iteration %d...\n", i + 1));
 		model.onIterationEnds(it -> System.out.println("...finished\n"));
 
-		// TODO condition d'arrêt spécifique
+		model.setEarlyStoppingCondition(new LossCondition(0.01));
 
 		// Start training
 		model.prepareTraining(trainingSamples);
@@ -100,7 +102,7 @@ public class MultilayerExamples {
 
 			SwingUtilities.invokeLater(() -> {
 				JFrame chartFrame = chart.asJFrame();
-				chartFrame.setSize(800, 600);
+				chartFrame.setSize(500, 500);
 				chartFrame.setLocationRelativeTo(null);
 				chartFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 				chartFrame.setVisible(true);
@@ -126,7 +128,7 @@ public class MultilayerExamples {
 		model.onIterationStarts(i -> System.out.printf("Iteration %d...\n", i + 1));
 		model.onIterationEnds(it -> System.out.println("...finished\n"));
 
-		// TODO condition d'arrêt spécifique
+		model.setEarlyStoppingCondition(new LossCondition(0.001));
 
 		// Start training
 		model.prepareTraining(trainingSamples);
@@ -143,7 +145,7 @@ public class MultilayerExamples {
 
 			SwingUtilities.invokeLater(() -> {
 				JFrame chartFrame = chart.asJFrame();
-				chartFrame.setSize(800, 600);
+				chartFrame.setSize(500, 500);
 				chartFrame.setLocationRelativeTo(null);
 				chartFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 				chartFrame.setVisible(true);
@@ -154,22 +156,20 @@ public class MultilayerExamples {
 	}
 
 	public static void table4_17() {
-		// TODO change it for FULL_BATCH
-
 		// Initializing a list of samples
 		List<ILabeledSample> trainingSamples = new CsvSampleImporter(
 				MonoNeuronExamples.class.getResourceAsStream("/table_4_17.csv"), ",").importSample(1);
 
 		// Setting up the model
 		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(
-				new GradientDescendTrainingMode());
-		model.addLayer(new MatrixLayer(0.0001, 1, 6, "tanh", new GaussianWeightsInitializer(0, 1)));
-		model.addLayer(new MatrixLayer(0.0001, 6, 1, "identity", new GaussianWeightsInitializer(0, 1)));
+				new FullBatchGradientDescentTrainingMode());
+		model.addLayer(new MatrixLayer(0.00002, 1, 8, "tanh", new GaussianWeightsInitializer(0, 1)));
+		model.addLayer(new MatrixLayer(0.00002, 8, 1, "identity", new GaussianWeightsInitializer(0, 1)));
 
 		model.onIterationStarts(i -> System.out.printf("Iteration %d...\n", i + 1));
 		model.onIterationEnds(it -> System.out.println("...finished\n"));
 
-		model.setEarlyStoppingCondition(new LossCondition(20.0));
+		model.setEarlyStoppingCondition(new LossCondition(0.13));
 		
 		// Start training
 		model.prepareTraining(trainingSamples);

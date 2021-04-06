@@ -30,6 +30,7 @@ public class LossCondition implements Predicate<IIterationEvaluation<DoubleMatri
 			double squaredError = sampleError.aggregate(MatrixFunctions.ADDITION, MatrixFunctions.SQR);
 			loss += squaredError;
 		}
+		loss /= t.getSampleEvaluations().size();
 		System.out.println("Loss:" + loss);
 		return loss < threshold;
 	}

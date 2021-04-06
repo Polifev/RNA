@@ -17,6 +17,7 @@ import be.hepl.rna.io.ISampleImporter;
 import be.hepl.rna.matrix.MatrixClassificatorWrapper;
 import be.hepl.rna.matrix.MatrixLayer;
 import be.hepl.rna.matrix.MatrixNeuralNetwork;
+import be.hepl.rna.matrix.stopconditions.LossCondition;
 import be.hepl.rna.matrix.trainingmode.AdalineTrainingMode;
 import cern.colt.matrix.DoubleMatrix1D;
 import cern.colt.matrix.DoubleMatrix2D;
@@ -38,7 +39,7 @@ public class MonoLayerExamples {
 		model.onIterationStarts(i -> System.out.printf("Iteration %d...\n", i + 1));
 		model.onIterationEnds(it -> System.out.println("...finished\n"));
 
-		// TODO condition d'arrêt spécifique
+		model.setEarlyStoppingCondition(new LossCondition(0.07));
 
 		// Start training
 		model.prepareTraining(trainingSamples);
@@ -80,7 +81,7 @@ public class MonoLayerExamples {
 		model.onIterationStarts(i -> System.out.printf("Iteration %d...\n", i + 1));
 		model.onIterationEnds(it -> System.out.println("...finished\n"));
 
-		// TODO condition d'arrêt spécifique
+		model.setEarlyStoppingCondition(new LossCondition(0.01));
 
 		// Start training
 		model.prepareTraining(trainingSamples);
@@ -89,6 +90,7 @@ public class MonoLayerExamples {
 			model.train(MAX_IT);
 			System.out.println("======TRAINED======");
 
+			System.out.println("CANNOT SHOW GRAPHICAL RESULTS !!!");
 			// Show results
 			// TODO show error, loss, weights or something else ???
 			

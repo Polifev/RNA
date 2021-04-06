@@ -16,7 +16,7 @@ import cern.colt.matrix.linalg.Algebra;
 /**
  * Update weights for each iteration
  */
-public class GradientDescendTrainingMode implements ITrainingMode<DoubleMatrix1D, DoubleMatrix2D> {
+public class FullBatchGradientDescentTrainingMode implements ITrainingMode<DoubleMatrix1D, DoubleMatrix2D> {
 
 	@Override
 	public void sampleBasedWeightsCorrection(ISampleEvaluation<DoubleMatrix1D> sampleEvaluation,

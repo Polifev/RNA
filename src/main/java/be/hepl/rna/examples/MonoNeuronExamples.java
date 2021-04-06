@@ -19,8 +19,11 @@ import be.hepl.rna.matrix.MatrixClassificatorWrapper;
 import be.hepl.rna.matrix.MatrixLayer;
 import be.hepl.rna.matrix.MatrixModelWrapper;
 import be.hepl.rna.matrix.MatrixNeuralNetwork;
+import be.hepl.rna.matrix.stopconditions.AccuracyCondition;
+import be.hepl.rna.matrix.stopconditions.LossCondition;
 import be.hepl.rna.matrix.trainingmode.AdalineTrainingMode;
 import be.hepl.rna.matrix.trainingmode.BasicPerceptronTrainingMode;
+import be.hepl.rna.matrix.trainingmode.FullBatchGradientDescentTrainingMode;
 import cern.colt.matrix.DoubleMatrix1D;
 import cern.colt.matrix.DoubleMatrix2D;
 
@@ -41,6 +44,8 @@ public class MonoNeuronExamples {
 
 		model.onIterationStarts(i -> System.out.printf("Iteration %d...\n", i + 1));
 		model.onIterationEnds(it -> System.out.println("...finished\n"));
+		
+		model.setEarlyStoppingCondition(new AccuracyCondition(1.0, 0.0));
 
 		// Start training
 		model.prepareTraining(trainingSamples);
@@ -76,6 +81,8 @@ public class MonoNeuronExamples {
 		model.onIterationStarts(i -> System.out.printf("Iteration %d...\n", i + 1));
 		model.onIterationEnds(it -> System.out.println("...finished\n"));
 
+		model.setEarlyStoppingCondition(new LossCondition(0.2));
+		
 		// Start training
 		model.prepareTraining(trainingSamples);
 		try {
@@ -104,12 +111,14 @@ public class MonoNeuronExamples {
 
 		// Setting up the model
 		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(
-				new AdalineTrainingMode());
+				new FullBatchGradientDescentTrainingMode());
 		model.addLayer(new MatrixLayer(0.0015, 2, 1, "identity", new ZeroWeightsInitializer()));
 
 		model.onIterationStarts(i -> System.out.printf("Iteration %d...\n", i + 1));
 		model.onIterationEnds(it -> System.out.println("...finished\n"));
 
+		model.setEarlyStoppingCondition(new LossCondition(0.75));
+		
 		// Start training
 		model.prepareTraining(trainingSamples);
 		try {
@@ -144,10 +153,12 @@ public class MonoNeuronExamples {
 		model.onIterationStarts(i -> System.out.printf("Iteration %d...\n", i + 1));
 		model.onIterationEnds(it -> System.out.println("...finished\n"));
 
+		model.setEarlyStoppingCondition(new LossCondition(1.2));
+		
 		// Start training
 		model.prepareTraining(trainingSamples);
 		try {
-			model.train(10000);
+			model.train(10_000);
 			System.out.println("======TRAINED======");
 
 			RegressionChart chart = new RegressionChart("Table 2.11");
