@@ -6,17 +6,18 @@ import be.hepl.rna.examples.MultilayerExamples;
 
 public class App {
 	public static void main(String[] args) {		
-		/*MonoNeuronExamples.and();
-		MonoNeuronExamples.table2_9();
-		MonoNeuronExamples.table2_10();
-		MonoNeuronExamples.table2_11();
+		/*MonoNeuronExamples.and();//BasicPerceptron
+		MonoNeuronExamples.table2_9();//Adaline
+		MonoNeuronExamples.table2_10();//Full Batch
+		MonoNeuronExamples.table2_11();//Adaline
 		
-		MonoLayerExamples.table3_1();
-		MonoLayerExamples.table3_5();*/
+		MonoLayerExamples.table3_1();//Adaline
+		MonoLayerExamples.table3_5();//Adaline
 		
-		MultilayerExamples.xor();
-		/*MultilayerExamples.table4_12();
-		MultilayerExamples.table4_14();
-		MultilayerExamples.table4_17();*/
+		MultilayerExamples.xor();//Full Batch
+		MultilayerExamples.table4_12();//Adaline
+		MultilayerExamples.table4_14();//Adaline
+		MultilayerExamples.table4_17();//Full Batch*/
+		MultilayerExamples.test_sacha();
 	}
 }

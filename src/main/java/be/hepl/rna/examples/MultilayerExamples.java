@@ -192,5 +192,48 @@ public class MultilayerExamples {
 			System.err.println(e.getMessage());
 		}
 	}
+	
+	public static void test_sacha() {
+		final int MAX_IT = 100_000;
+
+		// Initializing a list of samples
+		ISampleImporter importer = new CsvSampleImporter(
+				MultilayerExamples.class.getResourceAsStream("/test_sacha.csv"), ",");
+		List<ILabeledSample> trainingSamples = importer.importSample(2);
+
+		// Setting up the model
+		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(new AdalineTrainingMode());
+		model.addLayer(new MatrixLayer(0.50, 2, 15, "sigmoid", new GaussianWeightsInitializer()));
+		model.addLayer(new MatrixLayer(0.50, 15, 5, "sigmoid", new GaussianWeightsInitializer()));
+
+		model.onIterationStarts(i -> System.out.printf("Iteration %d...\n", i + 1));
+		model.onIterationEnds(it -> System.out.println("...finished\n"));
+
+		model.setEarlyStoppingCondition(new LossCondition(0.000001));
+
+		// Start training
+		model.prepareTraining(trainingSamples);
+
+		try {
+			model.train(MAX_IT);
+			System.out.println("======TRAINED======");
+
+			// Show results
+			ClassificationChart chart = new ClassificationChart("Non-linearly-dependent, five-classes segregation",
+					new String[] { "No class", "Class 1", "Class 2", "Class 3", "Class 4", "Class 5" }, true);
+			chart.setClassificator(new MatrixClassificatorWrapper(model, 0.5), 0.5, 3.7, 0.03, 0.5, 3.7, 0.03);
+			chart.setData(trainingSamples);
+
+			SwingUtilities.invokeLater(() -> {
+				JFrame chartFrame = chart.asJFrame();
+				chartFrame.setSize(500, 500);
+				chartFrame.setLocationRelativeTo(null);
+				chartFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+				chartFrame.setVisible(true);
+			});
+		} catch (OperationNotSupportedException e) {
+			System.err.println(e.getMessage());
+		}
+	}
 
 }
