@@ -52,8 +52,8 @@ public class ImageExample {
 		IClassificator classificator = new MatrixClassificatorWrapper(model, 0.5);
 		
 		ISampleImporter testImporter = new ZipSampleImporter(ExampleApp.class.getResourceAsStream("/symbols_test.zip"), ",");
-		List<ISample> testSamples = testImporter.importSample();
-		for(ISample sample : testSamples) {
+		List<ILabeledSample> testSamples = testImporter.importSample(-1);
+		for(ILabeledSample sample : testSamples) {
 			int classNumber = classificator.classify(sample.inputs()) + 1; // Tenir compte d'une erreur de classification
 			System.out.println(classes[classNumber]);
 			
