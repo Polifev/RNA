@@ -40,7 +40,6 @@ public class ZipSampleImporter implements ISampleImporter {
 		try {
 			ZipEntry entry = zip.getNextEntry();
 			while(entry != null) {
-				System.out.println(entry.getName());
 				tryReadIndex(zip, labels, entry);
 				tryReadSample(zip, images, entry);
 				entry = zip.getNextEntry();
@@ -103,7 +102,6 @@ public class ZipSampleImporter implements ISampleImporter {
 		try {
 			ZipEntry entry = zip.getNextEntry();
 			while(entry != null) {
-				System.out.println(entry.getName());
 				tryReadSample(zip, images, entry);
 				entry = zip.getNextEntry();
 			}
