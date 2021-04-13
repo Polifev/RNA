@@ -16,14 +16,14 @@ import be.hepl.rna.common.impl.CommonLabeledSample;
 import be.hepl.rna.common.impl.GaussianWeightsInitializer;
 import be.hepl.rna.io.CsvSampleImporter;
 import be.hepl.rna.io.ISampleImporter;
-import be.hepl.rna.matrix.MatrixClassificatorWrapper;
 import be.hepl.rna.matrix.MatrixLayer;
-import be.hepl.rna.matrix.MatrixModelWrapper;
 import be.hepl.rna.matrix.MatrixNeuralNetwork;
 import be.hepl.rna.matrix.stopconditions.AccuracyCondition;
 import be.hepl.rna.matrix.stopconditions.LossCondition;
 import be.hepl.rna.matrix.trainingmode.AdalineTrainingMode;
 import be.hepl.rna.matrix.trainingmode.FullBatchGradientDescentTrainingMode;
+import be.hepl.rna.matrix.wrappers.MatrixClassificatorWrapper;
+import be.hepl.rna.matrix.wrappers.MatrixModelWrapper;
 import cern.colt.matrix.DoubleMatrix1D;
 import cern.colt.matrix.DoubleMatrix2D;
 
@@ -61,7 +61,7 @@ public class MultilayerExamples {
 				JFrame chartFrame = chart.asJFrame();
 				chartFrame.setSize(500, 500);
 				chartFrame.setLocationRelativeTo(null);
-				chartFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+				chartFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 				chartFrame.setVisible(true);
 			});
 		} catch (OperationNotSupportedException e) {
@@ -104,7 +104,7 @@ public class MultilayerExamples {
 				JFrame chartFrame = chart.asJFrame();
 				chartFrame.setSize(500, 500);
 				chartFrame.setLocationRelativeTo(null);
-				chartFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+				chartFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 				chartFrame.setVisible(true);
 			});
 		} catch (OperationNotSupportedException e) {
@@ -147,7 +147,7 @@ public class MultilayerExamples {
 				JFrame chartFrame = chart.asJFrame();
 				chartFrame.setSize(500, 500);
 				chartFrame.setLocationRelativeTo(null);
-				chartFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+				chartFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 				chartFrame.setVisible(true);
 			});
 		} catch (OperationNotSupportedException e) {
@@ -184,7 +184,7 @@ public class MultilayerExamples {
 				JFrame chartFrame = chart.asJFrame();
 				chartFrame.setSize(500, 500);
 				chartFrame.setLocationRelativeTo(null);
-				chartFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+				chartFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 				chartFrame.setVisible(true);
 			});
 

@@ -1,4 +1,4 @@
-package be.hepl.rna.matrix;
+package be.hepl.rna.matrix.wrappers;
 
 import be.hepl.rna.common.IClassificator;
 import be.hepl.rna.common.INeuralNetwork;
