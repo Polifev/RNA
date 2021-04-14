@@ -6,6 +6,7 @@ import be.hepl.rna.ExampleApp;
 import be.hepl.rna.common.IClassificator;
 import be.hepl.rna.common.ILabeledSample;
 import be.hepl.rna.common.INeuralNetwork;
+import be.hepl.rna.common.ISample;
 import be.hepl.rna.common.impl.GaussianWeightsInitializer;
 import be.hepl.rna.io.ISampleImporter;
 import be.hepl.rna.io.ZipSampleImporter;
@@ -19,6 +20,10 @@ import cern.colt.matrix.DoubleMatrix2D;
 
 public class ImageExample {
 
+	/**
+	 * Cet exemple utilise deux sets d'images de taille 16x16 (1 pour l'entrainement et 1 pour valider le modèle)
+	 * Les images sont groupées dans un fichier .zip
+	 */
 	public static void processImages() {
 		final int MAX_IT = 10_000;
 
@@ -30,13 +35,13 @@ public class ImageExample {
 		// Setting up the model
 		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(
 				new FullBatchGradientDescentTrainingMode());
-		model.addLayer(new MatrixLayer(0.1, 256, 128, "sigmoid", new GaussianWeightsInitializer()));
-		model.addLayer(new MatrixLayer(0.1, 128, 4, "sigmoid", new GaussianWeightsInitializer()));
+		model.addLayer(new MatrixLayer(0.15, 256, 128, "sigmoid", new GaussianWeightsInitializer()));
+		model.addLayer(new MatrixLayer(0.15, 128, 4, "sigmoid", new GaussianWeightsInitializer()));
 
 		model.onIterationStarts(i -> System.out.printf("Iteration %d...\n", i + 1));
 		model.onIterationEnds(it -> System.out.println("...finished\n"));
 
-		model.setEarlyStoppingCondition(new LossCondition(0.00001));
+		model.setEarlyStoppingCondition(new LossCondition(0.00005));
 
 		// Start training
 		model.prepareTraining(trainingSamples);
@@ -52,9 +57,9 @@ public class ImageExample {
 		IClassificator classificator = new MatrixClassificatorWrapper(model, 0.5);
 		
 		ISampleImporter testImporter = new ZipSampleImporter(ExampleApp.class.getResourceAsStream("/image/symbols_test.zip"), ",");
-		List<ILabeledSample> testSamples = testImporter.importSample(-1);
+		List<ISample> testSamples = testImporter.importSample();
 		System.out.println("Testing on " + testSamples.size() + " test samples");
-		for(ILabeledSample sample : testSamples) {
+		for(ISample sample : testSamples) {
 			int classNumber = classificator.classify(sample.inputs()) + 1; // Tenir compte d'une erreur de classification
 			System.out.println(classes[classNumber]);
 		}
