@@ -148,7 +148,7 @@ public class MatrixNeuralNetwork implements INeuralNetwork<DoubleMatrix1D, Doubl
 		}
 		sampleEvaluation.setGivenInput(input);
 		sampleEvaluation.setLayerPotentials(layerPotentials);
-		sampleEvaluation.setLayerOutputs(layerOutputs);
+		sampleEvaluation.setLayerOutput(layerOutputs);
 		
 		return sampleEvaluation;
 	}

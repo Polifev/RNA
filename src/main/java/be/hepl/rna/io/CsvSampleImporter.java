@@ -22,7 +22,7 @@ public class CsvSampleImporter implements ISampleImporter {
 	}
 	
 	@Override
-	public List<ILabeledSample> importSample(int outputIndex) {
+	public List<ILabeledSample> importSamples(int outputIndex) {
 		List<ILabeledSample> samples = new LinkedList<ILabeledSample>();
 		try(BufferedReader reader = new BufferedReader(new InputStreamReader(in))){
 			while(reader.ready()) {
@@ -45,7 +45,7 @@ public class CsvSampleImporter implements ISampleImporter {
 	}
 	
 	@Override
-	public List<ISample> importSample() {
+	public List<ISample> importSamples() {
 		List<ISample> samples = new LinkedList<ISample>();
 		double[] input = null;
 		try(BufferedReader reader = new BufferedReader(new InputStreamReader(in))){

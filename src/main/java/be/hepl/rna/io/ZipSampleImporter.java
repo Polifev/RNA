@@ -31,7 +31,7 @@ public class ZipSampleImporter implements ISampleImporter {
 	}
 	
 	@Override
-	public List<ILabeledSample> importSample(int outputIndex) {
+	public List<ILabeledSample> importSamples(int outputIndex) {
 		List<ILabeledSample> result = new ArrayList<ILabeledSample>();
 		ZipInputStream zip = new ZipInputStream(this.inputStream);
 		List<String> labels = new ArrayList<String>();
@@ -94,7 +94,7 @@ public class ZipSampleImporter implements ISampleImporter {
 	}
 	
 	@Override
-	public List<ISample> importSample() {
+	public List<ISample> importSamples() {
 		List<ISample> result = new ArrayList<ISample>();
 		ZipInputStream zip = new ZipInputStream(this.inputStream);
 		Map<Integer, BufferedImage> images = new HashMap<Integer, BufferedImage>();

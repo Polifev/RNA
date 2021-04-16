@@ -32,7 +32,7 @@ public class MatrixSampleEvaluation implements ISampleEvaluation<DoubleMatrix1D>
 	public void setLayerPotentials(DoubleMatrix1D[] layerPotentials) {
 		this.layerPotentials = layerPotentials;
 	}
-	public void setLayerOutputs(DoubleMatrix1D[] layerOutputs) {
+	public void setLayerOutput(DoubleMatrix1D[] layerOutputs) {
 		this.layerOutputs = layerOutputs;
 	}
 }

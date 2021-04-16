@@ -29,10 +29,8 @@ public class AdalineTrainingMode implements ITrainingMode<DoubleMatrix1D, Double
 		
 		//Compute Error
 		DoubleMatrix1D error = sampleEvaluation.getExpectedOutput().copy().assign(sampleEvaluation.getLayerOutputs()[lastLayerIndex + 1], MatrixFunctions.SUBSTRACTION);
-
-		//double E = 1.0/2 * error.aggregate(MatrixFunctions.ADDITION, MatrixFunctions.SQR);// E = 1/2 * SUM(error^2)
 		
-		//Compute signal error = (err * f'(potential) )
+		//Compute signal error = ( err * f'(potential) )
 		DoubleMatrix1D signalError = sampleEvaluation.getLayerPotentials()[lastLayerIndex + 1].copy();
 		signalError.assign(v -> ActivationFunctions.getDerivated(lastLayer.getActivationFunctionName()).apply(v));
 		signalError.assign(error, MatrixFunctions.PRODUCT);

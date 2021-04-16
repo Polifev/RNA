@@ -71,7 +71,7 @@ public class MonoNeuronExamples {
 
 	public static void table2_9() {
 		// Initializing a list of samples
-		List<ILabeledSample> trainingSamples = new CsvSampleImporter(MonoNeuronExamples.class.getResourceAsStream("/table_2_9.csv"), ",").importSample(2);
+		List<ILabeledSample> trainingSamples = new CsvSampleImporter(MonoNeuronExamples.class.getResourceAsStream("/table_2_9.csv"), ",").importSamples(2);
 
 		// Setting up the model
 		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(
@@ -107,7 +107,7 @@ public class MonoNeuronExamples {
 	
 	public static void table2_10() {
 		// Initializing a list of samples
-		List<ILabeledSample> trainingSamples = new CsvSampleImporter(MonoNeuronExamples.class.getResourceAsStream("/table_2_10.csv"), ",").importSample(2);
+		List<ILabeledSample> trainingSamples = new CsvSampleImporter(MonoNeuronExamples.class.getResourceAsStream("/table_2_10.csv"), ",").importSamples(2);
 
 		// Setting up the model
 		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(
@@ -143,7 +143,7 @@ public class MonoNeuronExamples {
 	
 	public static void table2_11() {
 		// Initializing a list of samples
-		List<ILabeledSample> trainingSamples = new CsvSampleImporter(MonoNeuronExamples.class.getResourceAsStream("/table_2_11.csv"), ",").importSample(1);
+		List<ILabeledSample> trainingSamples = new CsvSampleImporter(MonoNeuronExamples.class.getResourceAsStream("/table_2_11.csv"), ",").importSamples(1);
 
 		// Setting up the model
 		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(

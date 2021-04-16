@@ -29,7 +29,7 @@ public class ImageExample {
 
 		// Initializing a list of samples
 		ISampleImporter importer = new ZipSampleImporter(ExampleApp.class.getResourceAsStream("/image/symbols.zip"), ",");
-		List<ILabeledSample> trainingSamples = importer.importSample(-1);
+		List<ILabeledSample> trainingSamples = importer.importSamples(-1);
 		System.out.println("Training on " + trainingSamples.size() + " training samples");
 
 		// Setting up the model
@@ -57,7 +57,7 @@ public class ImageExample {
 		IClassificator classificator = new MatrixClassificatorWrapper(model, 0.5);
 		
 		ISampleImporter testImporter = new ZipSampleImporter(ExampleApp.class.getResourceAsStream("/image/symbols_test.zip"), ",");
-		List<ISample> testSamples = testImporter.importSample();
+		List<ISample> testSamples = testImporter.importSamples();
 		System.out.println("Testing on " + testSamples.size() + " test samples");
 		for(ISample sample : testSamples) {
 			int classNumber = classificator.classify(sample.inputs()) + 1; // Tenir compte d'une erreur de classification

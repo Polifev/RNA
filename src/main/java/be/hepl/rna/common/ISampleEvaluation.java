@@ -14,5 +14,5 @@ public interface ISampleEvaluation<D1> {
 	public void setGivenInput(D1 givenInput);
 	public void setExpectedOutput(D1 expectedOutput);
 	public void setLayerPotentials(D1[] layerPotentials);
-	public void setLayerOutputs(D1[] layerOutputs);
+	public void setLayerOutput(D1[] layerOutputs);
 }

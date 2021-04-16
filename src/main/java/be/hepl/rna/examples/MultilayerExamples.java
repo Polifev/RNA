@@ -75,7 +75,7 @@ public class MultilayerExamples {
 		// Initializing a list of samples
 		ISampleImporter importer = new CsvSampleImporter(
 				MultilayerExamples.class.getResourceAsStream("/table_4_12.csv"), ",");
-		List<ILabeledSample> trainingSamples = importer.importSample(2);
+		List<ILabeledSample> trainingSamples = importer.importSamples(2);
 
 		// Setting up the model
 		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(new AdalineTrainingMode());
@@ -118,7 +118,7 @@ public class MultilayerExamples {
 		// Initializing a list of samples
 		ISampleImporter importer = new CsvSampleImporter(
 				MultilayerExamples.class.getResourceAsStream("/table_4_14.csv"), ",");
-		List<ILabeledSample> trainingSamples = importer.importSample(2);
+		List<ILabeledSample> trainingSamples = importer.importSamples(2);
 
 		// Setting up the model
 		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(new AdalineTrainingMode());
@@ -158,18 +158,18 @@ public class MultilayerExamples {
 	public static void table4_17() {
 		// Initializing a list of samples
 		List<ILabeledSample> trainingSamples = new CsvSampleImporter(
-				MonoNeuronExamples.class.getResourceAsStream("/table_4_17.csv"), ",").importSample(1);
+				MonoNeuronExamples.class.getResourceAsStream("/table_4_17.csv"), ",").importSamples(1);
 
 		// Setting up the model
 		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(
 				new FullBatchGradientDescentTrainingMode());
-		model.addLayer(new MatrixLayer(0.00002, 1, 8, "tanh", new GaussianWeightsInitializer(0, 1)));
-		model.addLayer(new MatrixLayer(0.00002, 8, 1, "identity", new GaussianWeightsInitializer(0, 1)));
+		model.addLayer(new MatrixLayer(0.001, 1, 8, "tanh", new GaussianWeightsInitializer(0, 1)));
+		model.addLayer(new MatrixLayer(0.001, 8, 1, "identity", new GaussianWeightsInitializer(0, 1)));
 
 		model.onIterationStarts(i -> System.out.printf("Iteration %d...\n", i + 1));
 		model.onIterationEnds(it -> System.out.println("...finished\n"));
 
-		model.setEarlyStoppingCondition(new LossCondition(0.13));
+		model.setEarlyStoppingCondition(new LossCondition(0.04));
 		
 		// Start training
 		model.prepareTraining(trainingSamples);
@@ -199,17 +199,17 @@ public class MultilayerExamples {
 		// Initializing a list of samples
 		ISampleImporter importer = new CsvSampleImporter(
 				MultilayerExamples.class.getResourceAsStream("/test_sacha.csv"), ",");
-		List<ILabeledSample> trainingSamples = importer.importSample(2);
+		List<ILabeledSample> trainingSamples = importer.importSamples(2);
 
 		// Setting up the model
 		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(new AdalineTrainingMode());
-		model.addLayer(new MatrixLayer(0.50, 2, 15, "sigmoid", new GaussianWeightsInitializer()));
-		model.addLayer(new MatrixLayer(0.50, 15, 5, "sigmoid", new GaussianWeightsInitializer()));
+		model.addLayer(new MatrixLayer(0.50, 2, 30, "sigmoid", new GaussianWeightsInitializer()));
+		model.addLayer(new MatrixLayer(0.50, 30, 5, "sigmoid", new GaussianWeightsInitializer()));
 
 		model.onIterationStarts(i -> System.out.printf("Iteration %d...\n", i + 1));
 		model.onIterationEnds(it -> System.out.println("...finished\n"));
 
-		model.setEarlyStoppingCondition(new LossCondition(0.000001));
+		model.setEarlyStoppingCondition(new LossCondition(0.00005));
 
 		// Start training
 		model.prepareTraining(trainingSamples);
@@ -228,7 +228,7 @@ public class MultilayerExamples {
 				JFrame chartFrame = chart.asJFrame();
 				chartFrame.setSize(500, 500);
 				chartFrame.setLocationRelativeTo(null);
-				chartFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+				chartFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 				chartFrame.setVisible(true);
 			});
 		} catch (OperationNotSupportedException e) {

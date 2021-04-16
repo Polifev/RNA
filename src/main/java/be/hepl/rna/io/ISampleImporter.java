@@ -7,7 +7,7 @@ import be.hepl.rna.common.ISample;
 
 public interface ISampleImporter {
 
-	public List<ILabeledSample> importSample(int outputIndex);
+	public List<ILabeledSample> importSamples(int outputIndex);
 	
-	public List<ISample> importSample();
+	public List<ISample> importSamples();
 }
