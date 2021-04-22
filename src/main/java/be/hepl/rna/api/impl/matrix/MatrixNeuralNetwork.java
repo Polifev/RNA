@@ -1,8 +1,10 @@
 package be.hepl.rna.api.impl.matrix;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -11,6 +13,7 @@ import javax.naming.OperationNotSupportedException;
 import be.hepl.rna.api.IIterationEvaluation;
 import be.hepl.rna.api.ILabeledSample;
 import be.hepl.rna.api.ILayer;
+import be.hepl.rna.api.IMetric;
 import be.hepl.rna.api.INeuralNetwork;
 import be.hepl.rna.api.ISample;
 import be.hepl.rna.api.ISampleEvaluation;
@@ -24,13 +27,13 @@ import cern.colt.matrix.linalg.Algebra;
 public class MatrixNeuralNetwork implements INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D>{
 	private static final DoubleMatrix1D IMAGINARY_INPUT = DoubleFactory1D.dense.make(new double[] {1.0});
 	
-	// Training data
-	private List<DoubleMatrix1D> trainingInput = new ArrayList<>();
-	private List<DoubleMatrix1D> trainingOutput = new ArrayList<>();
-
 	// Layers (ordered in two ways)
 	private List<ILayer<DoubleMatrix2D>> layers = new LinkedList<>();
 
+	// Metrics that can be computed
+	private Map<String, IMetric<DoubleMatrix1D>> metrics = new HashMap<String, IMetric<DoubleMatrix1D>>();
+	private Map<String, Consumer<Double>> onMetricComputed  = new HashMap<String, Consumer<Double>>();
+	
 	// Training mode
 	private ITrainingMode<DoubleMatrix1D, DoubleMatrix2D> trainingMode;
 	
@@ -38,7 +41,10 @@ public class MatrixNeuralNetwork implements INeuralNetwork<DoubleMatrix1D, Doubl
 	private Consumer<ISampleEvaluation<DoubleMatrix1D>> sampleProcessedCallback = sampleEvaluation -> {};
 	private Consumer<Integer> iterationStartsCallback = i -> {};
 	private Consumer<IIterationEvaluation<DoubleMatrix1D>> iterationEndsCallback = iterationEvaluation -> {};
-	private Predicate<IIterationEvaluation<DoubleMatrix1D>> earlyStoppingCondition = iterationEvaluation -> false;
+	
+	private Predicate<Double> earlyStoppingCondition = iterationEvaluation -> false;
+
+	private String watchedMetric;
 	
 	public MatrixNeuralNetwork(ITrainingMode<DoubleMatrix1D, DoubleMatrix2D> trainingMode) {
 		this.trainingMode = trainingMode;
@@ -50,17 +56,15 @@ public class MatrixNeuralNetwork implements INeuralNetwork<DoubleMatrix1D, Doubl
 	}
 
 	@Override
-	public void prepareTraining(Iterable<ILabeledSample> trainingSamples) {
-		trainingInput.clear();
-		trainingOutput.clear();
+	public void train(int iterationCount, Iterable<ILabeledSample> trainingSamples) throws OperationNotSupportedException {
+		// Setup the training data
+		List<DoubleMatrix1D> trainingInput = new ArrayList<DoubleMatrix1D>();
+		List<DoubleMatrix1D> trainingOutput = new ArrayList<DoubleMatrix1D>();
 		for (ILabeledSample sample : trainingSamples) {
 			trainingInput.add(buildInputMatrix(sample.inputs()));
 			trainingOutput.add(DoubleFactory1D.dense.make(sample.expectedOutput()));
 		}
-	}
-
-	@Override
-	public void train(int iterationCount) throws OperationNotSupportedException {
+		
 		boolean earlyStopped = false;
 		
 		// For each iterations
@@ -79,11 +83,17 @@ public class MatrixNeuralNetwork implements INeuralNetwork<DoubleMatrix1D, Doubl
 				sampleProcessedCallback.accept(sampleEvaluation);
 			}
 			
-			// Call the iteration based training
-			trainingMode.iterationBasedWeightsCorrection(iteration, layers);
+			// Compute the metrics
+			for(String metricName : metrics.keySet()) {
+				double result = metrics.get(metricName).compute(iteration);
+				if(metricName.equals(watchedMetric)) {
+					earlyStopped = earlyStoppingCondition.test(result);
+				}
+				onMetricComputed.get(metricName).accept(result);
+			}	
 			
-			// Try earlyStoppingCondition
-			earlyStopped = earlyStoppingCondition.test(iteration);
+			// Call the iteration based training
+			trainingMode.iterationBasedWeightsCorrection(iteration, layers);	
 			
 			// Call the iteration end callback
 			iterationEndsCallback.accept(iteration);
@@ -109,9 +119,15 @@ public class MatrixNeuralNetwork implements INeuralNetwork<DoubleMatrix1D, Doubl
 	public void onIterationEnds(Consumer<IIterationEvaluation<DoubleMatrix1D>> callback) {
 		this.iterationEndsCallback = callback;
 	}
-	
+
 	@Override
-	public void setEarlyStoppingCondition(Predicate<IIterationEvaluation<DoubleMatrix1D>> condition) {
+	public void registerMetric(String string, AccuracyMetric accuracyMetric) {
+		
+	}
+
+	@Override
+	public void stopWhen(String metricName, Predicate<Double> condition) {
+		this.watchedMetric = metricName;
 		this.earlyStoppingCondition = condition;
 	}
 	

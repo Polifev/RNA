@@ -5,6 +5,8 @@ import java.util.function.Predicate;
 
 import javax.naming.OperationNotSupportedException;
 
+import be.hepl.rna.api.impl.matrix.AccuracyMetric;
+
 /**
  * 
  * @author Pol
@@ -14,12 +16,13 @@ import javax.naming.OperationNotSupportedException;
  */
 public interface INeuralNetwork<D1, D2> {
 	void addLayer(ILayer<D2> layer);
-	void prepareTraining(Iterable<ILabeledSample> trainingSamples);
-	void train(int iterationCount) throws OperationNotSupportedException;
+	void train(int iterationCount, Iterable<ILabeledSample> trainingSamples) throws OperationNotSupportedException;
 	ISampleEvaluation<D1> evaluate(ISample sample);
+	void registerMetric(String string, AccuracyMetric accuracyMetric);
 	void onSampleProcessed(Consumer<ISampleEvaluation<D1>> callback);
 	void onIterationStarts(Consumer<Integer> callback);
 	void onIterationEnds(Consumer<IIterationEvaluation<D1>> callback);
-	void setEarlyStoppingCondition(Predicate<IIterationEvaluation<D1>> condition);
+	void stopWhen(String metricName, Predicate<Double> condition);
 	String generateReport();
+	
 }

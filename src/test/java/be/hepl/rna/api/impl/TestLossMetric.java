@@ -1,7 +1,6 @@
 package be.hepl.rna.api.impl;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -13,12 +12,12 @@ import org.junit.Test;
 
 import be.hepl.rna.api.IIterationEvaluation;
 import be.hepl.rna.api.ISampleEvaluation;
-import be.hepl.rna.api.impl.matrix.AccuracyCondition;
+import be.hepl.rna.api.impl.matrix.LossMetric;
 import cern.colt.matrix.DoubleFactory1D;
 import cern.colt.matrix.DoubleMatrix1D;
 
-public class TestAccuracyCondition {
-
+public class TestLossMetric {
+	private static final double EPSILON = 0.00_000_1;
 	private IIterationEvaluation<DoubleMatrix1D> iterationEvaluation;
 
 	@Before
@@ -32,26 +31,10 @@ public class TestAccuracyCondition {
 	}
 
 	@Test
-	public void testAccuracyWithNoTolerance() {
-		assertFalse(new AccuracyCondition(1.0, 0.0).test(iterationEvaluation));
-		assertFalse(new AccuracyCondition(0.25, 0.0).test(iterationEvaluation));
-		assertTrue(new AccuracyCondition(0.0, 0.0).test(iterationEvaluation));
-	}
-
-	@Test
-	public void testAccuracyWithLittleTolerance() {
-		assertFalse(new AccuracyCondition(1.0, 0.2).test(iterationEvaluation));
-		assertFalse(new AccuracyCondition(0.75, 0.2).test(iterationEvaluation));
-		assertTrue(new AccuracyCondition(0.5, 0.2).test(iterationEvaluation));
-		assertTrue(new AccuracyCondition(0.25, 0.2).test(iterationEvaluation));
-	}
-
-	@Test
-	public void testAccuracyWithHighTolerance() {
-		assertFalse(new AccuracyCondition(1.0, 0.5).test(iterationEvaluation));
-		assertTrue(new AccuracyCondition(0.75, 0.5).test(iterationEvaluation));
-		assertTrue(new AccuracyCondition(0.5, 0.5).test(iterationEvaluation));
-		assertTrue(new AccuracyCondition(0.25, 0.5).test(iterationEvaluation));
+	public void computesLossAndCompareWithThreshold() {
+		// ((0 - 0.2)^2 + (1 - 0.4)^2 + (1 - 0.6)^2 + (1 - 0.8)^2) / 4
+		final double expectedLoss = (0.15);
+		assertEquals(expectedLoss, new LossMetric().compute(iterationEvaluation), EPSILON);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -71,4 +54,5 @@ public class TestAccuracyCondition {
 				.thenReturn(new DoubleMatrix1D[] { DoubleFactory1D.dense.make(new double[] { y }), });
 		return sample;
 	}
+
 }
