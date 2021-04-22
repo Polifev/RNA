@@ -27,7 +27,7 @@ public class LossCondition implements Predicate<IIterationEvaluation<DoubleMatri
 		for (ISampleEvaluation<DoubleMatrix1D> sample : t.getSampleEvaluations()) {
 			int outputIndex = sample.getLayerOutputs().length - 1;
 			DoubleMatrix1D sampleError = sample.getExpectedOutput().copy().assign(sample.getLayerOutputs()[outputIndex], MatrixFunctions.SUBSTRACTION);
-			double squaredError = sampleError.aggregate(MatrixFunctions.ADDITION, MatrixFunctions.SQR);
+			double squaredError = sampleError.aggregate(MatrixFunctions.ADDITION, MatrixFunctions.SQUARE);
 			loss += squaredError;
 		}
 		loss /= t.getSampleEvaluations().size();

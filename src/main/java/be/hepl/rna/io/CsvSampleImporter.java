@@ -51,8 +51,8 @@ public class CsvSampleImporter implements ISampleImporter {
 			while((line = reader.readLine()) != null) {
 				result.add(mapper.apply(line));
 			}
-		} catch (IOException e) {
-			System.out.println("SampleImporter > Erreur lors de la lecture");
+		} catch (IOException ex) {
+			result.clear();
 		}
 		return result;
 	}

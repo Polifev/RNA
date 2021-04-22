@@ -1,6 +1,7 @@
 package be.hepl.rna.io;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -73,5 +74,99 @@ public class TestCsvSampleImporter {
 		ILabeledSample labeledSample1 = labeledSamples.get(0);
 		assertEquals(inputLength, labeledSample1.inputs().length);
 		assertEquals(1, labeledSample1.expectedOutput().length);
+	}
+	
+	@Test
+	public void importedSamplesHaveTheRightData() {
+		// Given
+		final int inputLength = 2;
+		ISampleImporter importer = new CsvSampleImporter(fakeInputStream, ",", inputLength);
+
+		// When
+		List<ILabeledSample> samples = importer.importLabeledSamples();
+
+		// Then
+		ILabeledSample sample1 = samples.get(0);
+		assertEquals(0, sample1.inputs()[0], 0.00_000_1);
+		assertEquals(0, sample1.inputs()[1], 0.00_000_1);
+		assertEquals(0, sample1.expectedOutput()[0], 0.00_000_1);
+		
+		ILabeledSample sample4 = samples.get(3);
+		assertEquals(1, sample4.inputs()[0], 0.00_000_1);
+		assertEquals(1, sample4.inputs()[1], 0.00_000_1);
+		assertEquals(1, sample4.expectedOutput()[0], 0.00_000_1);
+	}
+	
+	@Test
+	public void importedLabeledSamplesHaveTheRightData() {
+		// Given
+		final int inputLength = 2;
+		ISampleImporter importer = new CsvSampleImporter(fakeInputStream, ",", inputLength);
+
+		// When
+		List<ISample> samples = importer.importSamples();
+
+		// Then
+		ISample sample1 = samples.get(0);
+		assertEquals(0, sample1.inputs()[0], 0.00_000_1);
+		assertEquals(0, sample1.inputs()[1], 0.00_000_1);
+		
+		ISample sample2 = samples.get(1);
+		assertEquals(0, sample2.inputs()[0], 0.00_000_1);
+		assertEquals(1, sample2.inputs()[1], 0.00_000_1);
+	}
+	
+	@Test
+	public void inputStreamIsFullyReadAfterAfterSamplesImport() throws IOException {
+		// Given
+		ISampleImporter importer = new CsvSampleImporter(fakeInputStream, ",", 2);
+	
+		// When
+		importer.importSamples();
+	
+		// Then
+		assertEquals(0, fakeInputStream.available());
+	}
+	
+	@Test
+	public void inputStreamIsFullyReadAfterLabeledSamplesImport() throws IOException {
+		// Given
+		ISampleImporter importer = new CsvSampleImporter(fakeInputStream, ",", 2);
+	
+		// When
+		importer.importLabeledSamples();
+	
+		// Then
+		assertEquals(0, fakeInputStream.available());
+	}
+	
+	@Test
+	public void importedSamplesListIsEmptyIfIOExceptionOccurs() throws IOException {
+		// Given
+		fakeInputStream = mock(InputStream.class);
+		when(fakeInputStream.read()).thenThrow(IOException.class);
+		
+		ISampleImporter importer = new CsvSampleImporter(fakeInputStream, ",", 2);
+	
+		// When
+		List<ISample> samples = importer.importSamples();
+	
+		// Then
+		assertEquals(0, samples.size());
+	}
+	
+	@Test
+	public void importedLabeledSamplesListIsEmptyIfIOExceptionOccurs() throws IOException {
+		// Given
+		fakeInputStream = mock(InputStream.class);
+		when(fakeInputStream.read()).thenThrow(IOException.class);
+		
+		ISampleImporter importer = new CsvSampleImporter(fakeInputStream, ",", 2);
+	
+		// When
+		List<ILabeledSample> samples = importer.importLabeledSamples();
+	
+		// Then
+		assertEquals(0, samples.size());
 	}
 }

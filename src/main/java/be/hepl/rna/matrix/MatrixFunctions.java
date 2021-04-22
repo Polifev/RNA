@@ -9,7 +9,7 @@ public class MatrixFunctions {
 	public static final DoubleDoubleFunction PRODUCT = new Product();
 	
 	public static final DoubleFunction ABS = new Abs();
-	public static final DoubleFunction SQR = new Sqr();
+	public static final DoubleFunction SQUARE = new Sqr();
 	
 	private static class Addition implements DoubleDoubleFunction {
 		@Override
