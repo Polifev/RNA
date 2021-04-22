@@ -10,7 +10,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import be.hepl.rna.api.IIterationEvaluation;
+import be.hepl.rna.api.IBatchEvaluation;
 import be.hepl.rna.api.ISampleEvaluation;
 import be.hepl.rna.api.impl.matrix.AccuracyMetric;
 import cern.colt.matrix.DoubleFactory1D;
@@ -18,7 +18,7 @@ import cern.colt.matrix.DoubleMatrix1D;
 
 public class TestAccuracyMetric {
 	private static final double EPSILON = 0.00_000_1;
-	private IIterationEvaluation<DoubleMatrix1D> iterationEvaluation;
+	private IBatchEvaluation<DoubleMatrix1D> iterationEvaluation;
 
 	@Before
 	public void setup() {
@@ -46,9 +46,8 @@ public class TestAccuracyMetric {
 	}
 
 	@SuppressWarnings("unchecked")
-	private IIterationEvaluation<DoubleMatrix1D> mockIteration(List<ISampleEvaluation<DoubleMatrix1D>> samples) {
-		IIterationEvaluation<DoubleMatrix1D> iterationEvaluation = mock(IIterationEvaluation.class);
-		when(iterationEvaluation.getIterationNumber()).thenReturn(0);
+	private IBatchEvaluation<DoubleMatrix1D> mockIteration(List<ISampleEvaluation<DoubleMatrix1D>> samples) {
+		IBatchEvaluation<DoubleMatrix1D> iterationEvaluation = mock(IBatchEvaluation.class);
 		when(iterationEvaluation.getSampleEvaluations()).thenReturn(samples);
 		return iterationEvaluation;
 	}

@@ -1,6 +1,5 @@
 package be.hepl.rna.api;
 
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import javax.naming.OperationNotSupportedException;
@@ -16,13 +15,10 @@ import be.hepl.rna.api.impl.matrix.AccuracyMetric;
  */
 public interface INeuralNetwork<D1, D2> {
 	void addLayer(ILayer<D2> layer);
+	void setTrainingParameters(int batchSize, ITrainingMode<D1, D2> trainingMode);
+	void registerMetric(String string, AccuracyMetric accuracyMetric);
+	void stopWhen(String metricName, Predicate<Double> condition);
+	
 	void train(int iterationCount, Iterable<ILabeledSample> trainingSamples) throws OperationNotSupportedException;
 	ISampleEvaluation<D1> evaluate(ISample sample);
-	void registerMetric(String string, AccuracyMetric accuracyMetric);
-	void onSampleProcessed(Consumer<ISampleEvaluation<D1>> callback);
-	void onIterationStarts(Consumer<Integer> callback);
-	void onIterationEnds(Consumer<IIterationEvaluation<D1>> callback);
-	void stopWhen(String metricName, Predicate<Double> condition);
-	String generateReport();
-	
 }

@@ -10,13 +10,11 @@ import java.util.function.Predicate;
 
 import javax.naming.OperationNotSupportedException;
 
-import be.hepl.rna.api.IIterationEvaluation;
 import be.hepl.rna.api.ILabeledSample;
 import be.hepl.rna.api.ILayer;
 import be.hepl.rna.api.IMetric;
 import be.hepl.rna.api.INeuralNetwork;
 import be.hepl.rna.api.ISample;
-import be.hepl.rna.api.ISampleEvaluation;
 import be.hepl.rna.api.ITrainingMode;
 import be.hepl.rna.api.impl.ActivationFunctions;
 import cern.colt.matrix.DoubleFactory1D;
@@ -35,24 +33,21 @@ public class MatrixNeuralNetwork implements INeuralNetwork<DoubleMatrix1D, Doubl
 	private Map<String, Consumer<Double>> onMetricComputed  = new HashMap<String, Consumer<Double>>();
 	
 	// Training mode
+	private int batchSize = 1;
 	private ITrainingMode<DoubleMatrix1D, DoubleMatrix2D> trainingMode;
-	
-	// Callbacks
-	private Consumer<ISampleEvaluation<DoubleMatrix1D>> sampleProcessedCallback = sampleEvaluation -> {};
-	private Consumer<Integer> iterationStartsCallback = i -> {};
-	private Consumer<IIterationEvaluation<DoubleMatrix1D>> iterationEndsCallback = iterationEvaluation -> {};
-	
 	private Predicate<Double> earlyStoppingCondition = iterationEvaluation -> false;
 
 	private String watchedMetric;
 	
-	public MatrixNeuralNetwork(ITrainingMode<DoubleMatrix1D, DoubleMatrix2D> trainingMode) {
-		this.trainingMode = trainingMode;
-	}
-	
 	@Override
 	public void addLayer(ILayer<DoubleMatrix2D> layer) {
 		layers.add(layer);
+	}
+	
+	@Override
+	public void setTrainingParameters(int batchSize, ITrainingMode<DoubleMatrix1D, DoubleMatrix2D> trainingMode) {
+		this.batchSize = batchSize;
+		this.trainingMode = trainingMode;
 	}
 
 	@Override
@@ -66,37 +61,37 @@ public class MatrixNeuralNetwork implements INeuralNetwork<DoubleMatrix1D, Doubl
 		}
 		
 		boolean earlyStopped = false;
+		BatchIterationEvaluation trainingBatch = new BatchIterationEvaluation(this.batchSize);
+		int currentBatch = this.batchSize;
 		
 		// For each iterations
 		for (int i = 0; i < iterationCount && !earlyStopped; i++) {
-			iterationStartsCallback.accept(i);
-			MatrixIterationEvaluation iteration = new MatrixIterationEvaluation(i);
+			BatchIterationEvaluation iterationBatch = new BatchIterationEvaluation(trainingInput.size());
 			
 			// For each sample
 			for (int sampleIndex = 0; sampleIndex < trainingInput.size(); sampleIndex++) {
 				// Evaluate sample labeling
 				MatrixSampleEvaluation sampleEvaluation = evaluate(trainingInput.get(sampleIndex));
 				sampleEvaluation.setExpectedOutput(trainingOutput.get(sampleIndex));
-				iteration.addTrainingResult(sampleEvaluation);
-				// Call the sample based training
-				trainingMode.sampleBasedWeightsCorrection(sampleEvaluation, this.layers);
-				sampleProcessedCallback.accept(sampleEvaluation);
+				iterationBatch.addTrainingResult(sampleEvaluation);
+				
+				trainingBatch.addTrainingResult(sampleEvaluation);
+				currentBatch--;
+				if(currentBatch == 0) {
+					trainingMode.updateWeights(trainingBatch, this.layers);
+					trainingBatch = new BatchIterationEvaluation(this.batchSize);
+					currentBatch = this.batchSize;
+				}
 			}
 			
 			// Compute the metrics
 			for(String metricName : metrics.keySet()) {
-				double result = metrics.get(metricName).compute(iteration);
+				double result = metrics.get(metricName).compute(iterationBatch);
 				if(metricName.equals(watchedMetric)) {
 					earlyStopped = earlyStoppingCondition.test(result);
 				}
 				onMetricComputed.get(metricName).accept(result);
-			}	
-			
-			// Call the iteration based training
-			trainingMode.iterationBasedWeightsCorrection(iteration, layers);	
-			
-			// Call the iteration end callback
-			iterationEndsCallback.accept(iteration);
+			}
 		}
 	}
 	
@@ -104,25 +99,10 @@ public class MatrixNeuralNetwork implements INeuralNetwork<DoubleMatrix1D, Doubl
 	public MatrixSampleEvaluation evaluate(ISample sample) {
 		return evaluate(buildInputMatrix(sample.inputs()));
 	}
-	
-	@Override
-	public void onSampleProcessed(Consumer<ISampleEvaluation<DoubleMatrix1D>> callback) {
-		this.sampleProcessedCallback = callback;
-	}
-	
-	@Override
-	public void onIterationStarts(Consumer<Integer> callback) {
-		this.iterationStartsCallback = callback;
-	}
-	
-	@Override
-	public void onIterationEnds(Consumer<IIterationEvaluation<DoubleMatrix1D>> callback) {
-		this.iterationEndsCallback = callback;
-	}
 
 	@Override
-	public void registerMetric(String string, AccuracyMetric accuracyMetric) {
-		
+	public void registerMetric(String metricName, AccuracyMetric accuracyMetric) {
+		this.metrics.put(metricName, accuracyMetric);
 	}
 
 	@Override
@@ -131,15 +111,8 @@ public class MatrixNeuralNetwork implements INeuralNetwork<DoubleMatrix1D, Doubl
 		this.earlyStoppingCondition = condition;
 	}
 	
-	@Override
-	public String generateReport() {
-		return "";
-	}
-	
 	private MatrixSampleEvaluation evaluate(DoubleMatrix1D input) {
 		MatrixSampleEvaluation sampleEvaluation = new MatrixSampleEvaluation();
-		
-		
 		DoubleMatrix1D[] layerPotentials = new DoubleMatrix1D[1 + this.layers.size()];
 		DoubleMatrix1D[] layerOutputs = new DoubleMatrix1D[1 + this.layers.size()];
 		

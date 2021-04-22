@@ -3,21 +3,15 @@ package be.hepl.rna.api.impl.matrix;
 import java.util.ArrayList;
 import java.util.List;
 
-import be.hepl.rna.api.IIterationEvaluation;
+import be.hepl.rna.api.IBatchEvaluation;
 import be.hepl.rna.api.ISampleEvaluation;
 import cern.colt.matrix.DoubleMatrix1D;
 
-public class MatrixIterationEvaluation implements IIterationEvaluation<DoubleMatrix1D>{
-	private int iterationNumber;
+public class BatchIterationEvaluation implements IBatchEvaluation<DoubleMatrix1D>{
 	private List<ISampleEvaluation<DoubleMatrix1D>> sampleEvaluations;
 	
-	MatrixIterationEvaluation(int iterationNumber) {
-		this.iterationNumber = iterationNumber;
-		this.sampleEvaluations = new ArrayList<>();
-	}
-	
-	public int getIterationNumber() {
-		return iterationNumber;
+	BatchIterationEvaluation(int batchSize) {
+		this.sampleEvaluations = new ArrayList<>(batchSize);
 	}
 	
 	@Override

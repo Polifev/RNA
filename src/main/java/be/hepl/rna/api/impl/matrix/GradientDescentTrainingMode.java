@@ -2,7 +2,7 @@ package be.hepl.rna.api.impl.matrix;
 
 import java.util.List;
 
-import be.hepl.rna.api.IIterationEvaluation;
+import be.hepl.rna.api.IBatchEvaluation;
 import be.hepl.rna.api.ILayer;
 import be.hepl.rna.api.ISampleEvaluation;
 import be.hepl.rna.api.ITrainingMode;
@@ -11,23 +11,13 @@ import cern.colt.matrix.DoubleMatrix1D;
 import cern.colt.matrix.DoubleMatrix2D;
 import cern.colt.matrix.linalg.Algebra;
 
-/**
- * Update weights for each iteration
- */
-public class FullBatchGradientDescentTrainingMode implements ITrainingMode<DoubleMatrix1D, DoubleMatrix2D> {
+public class GradientDescentTrainingMode implements ITrainingMode<DoubleMatrix1D, DoubleMatrix2D> {
 
 	@Override
-	public void sampleBasedWeightsCorrection(ISampleEvaluation<DoubleMatrix1D> sampleEvaluation,
-			List<ILayer<DoubleMatrix2D>> layers) {
-		// Not in GradientDescend
-	}
-
-	@Override
-	public void iterationBasedWeightsCorrection(IIterationEvaluation<DoubleMatrix1D> iteration,
-			List<ILayer<DoubleMatrix2D>> layers) {
-		DoubleMatrix2D[] globalCorrection = new DoubleMatrix2D[layers.size()];
-		for (int i = 0; i < globalCorrection.length; i++) {
-			globalCorrection[i] = layers.get(i).getWeights().like();
+	public void updateWeights(IBatchEvaluation<DoubleMatrix1D> iteration, List<ILayer<DoubleMatrix2D>> layers) {
+		DoubleMatrix2D[] batchCorrection = new DoubleMatrix2D[layers.size()];
+		for (int i = 0; i < batchCorrection.length; i++) {
+			batchCorrection[i] = layers.get(i).getWeights().like();
 		}
 
 		// Back-propagation
@@ -78,12 +68,12 @@ public class FullBatchGradientDescentTrainingMode implements ITrainingMode<Doubl
 				correction = Algebra.DEFAULT.multOuter(signalErrors[i], input, correction);
 				correction.assign(new ScalarMultiplication(layer.getLearningRate()));
 
-				globalCorrection[i].assign(correction, MatrixFunctions.ADDITION);
+				batchCorrection[i].assign(correction, MatrixFunctions.ADDITION);
 			}
 		}
-		
-		for(int i = 0; i < globalCorrection.length; i++) {
-			layers.get(i).getWeights().assign(globalCorrection[i], MatrixFunctions.ADDITION);
+
+		for (int i = 0; i < batchCorrection.length; i++) {
+			layers.get(i).getWeights().assign(batchCorrection[i], MatrixFunctions.ADDITION);
 		}
 	}
 

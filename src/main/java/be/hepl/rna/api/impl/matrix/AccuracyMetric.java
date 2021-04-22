@@ -1,6 +1,6 @@
 package be.hepl.rna.api.impl.matrix;
 
-import be.hepl.rna.api.IIterationEvaluation;
+import be.hepl.rna.api.IBatchEvaluation;
 import be.hepl.rna.api.IMetric;
 import be.hepl.rna.api.ISampleEvaluation;
 import cern.colt.matrix.DoubleMatrix1D;
@@ -19,7 +19,7 @@ public class AccuracyMetric implements IMetric<DoubleMatrix1D> {
 	}
 
 	@Override
-	public double compute(IIterationEvaluation<DoubleMatrix1D> iterationEvaluation) {
+	public double compute(IBatchEvaluation<DoubleMatrix1D> iterationEvaluation) {
 		double accuracy = 0;
 
 		for (ISampleEvaluation<DoubleMatrix1D> sample : iterationEvaluation.getSampleEvaluations()) {
