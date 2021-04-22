@@ -31,7 +31,31 @@ public class ZipSampleImporter implements ISampleImporter {
 	}
 	
 	@Override
-	public List<ILabeledSample> importSamples(int outputIndex) {
+	public List<ISample> importSamples() {
+		List<ISample> result = new ArrayList<ISample>();
+		ZipInputStream zip = new ZipInputStream(this.inputStream);
+		Map<Integer, BufferedImage> images = new HashMap<Integer, BufferedImage>();
+		
+		try {
+			ZipEntry entry = zip.getNextEntry();
+			while(entry != null) {
+				tryReadSample(zip, images, entry);
+				entry = zip.getNextEntry();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		for(Integer i : images.keySet()) {
+			double[] in = imageToDoubleArray(images.get(i));
+			result.add(new CommonSample(in));
+		}
+		
+		return result;
+	}
+	
+	@Override
+	public List<ILabeledSample> importLabeledSamples() {
 		List<ILabeledSample> result = new ArrayList<ILabeledSample>();
 		ZipInputStream zip = new ZipInputStream(this.inputStream);
 		List<String> labels = new ArrayList<String>();
@@ -90,30 +114,6 @@ public class ZipSampleImporter implements ISampleImporter {
 		for(int i = 0; i < parts.length; i++) {
 			result[i] = Double.parseDouble(parts[i].trim());
 		}
-		return result;
-	}
-	
-	@Override
-	public List<ISample> importSamples() {
-		List<ISample> result = new ArrayList<ISample>();
-		ZipInputStream zip = new ZipInputStream(this.inputStream);
-		Map<Integer, BufferedImage> images = new HashMap<Integer, BufferedImage>();
-		
-		try {
-			ZipEntry entry = zip.getNextEntry();
-			while(entry != null) {
-				tryReadSample(zip, images, entry);
-				entry = zip.getNextEntry();
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		for(Integer i : images.keySet()) {
-			double[] in = imageToDoubleArray(images.get(i));
-			result.add(new CommonSample(in));
-		}
-		
 		return result;
 	}
 }

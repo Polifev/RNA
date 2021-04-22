@@ -1,10 +1,12 @@
 package be.hepl.rna.io;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import be.hepl.rna.common.ILabeledSample;
 import be.hepl.rna.common.ISample;
@@ -15,52 +17,51 @@ public class CsvSampleImporter implements ISampleImporter {
 
 	private final InputStream in;
 	private final String separator;
+	private final int inputSize;
 	
-	public CsvSampleImporter(InputStream in, String separator) {
+	public CsvSampleImporter(InputStream in, String separator, int inputSize) {
 		this.in = in;
 		this.separator = separator;
-	}
-	
-	@Override
-	public List<ILabeledSample> importSamples(int outputIndex) {
-		List<ILabeledSample> samples = new LinkedList<ILabeledSample>();
-		try(BufferedReader reader = new BufferedReader(new InputStreamReader(in))){
-			while(reader.ready()) {
-				String line = reader.readLine();
-				String[] values = line.split(separator);
-				double[] input = new double[outputIndex];
-				double[] output = new double[values.length - outputIndex];
-				for(int i = 0 ; i < outputIndex; i++) {
-					input[i] = Double.parseDouble(values[i]);
-				}
-				for(int i = outputIndex ; i < values.length ; i++) {
-					output[i-outputIndex] = Double.parseDouble(values[i]);
-				}
-				samples.add(new CommonLabeledSample(input, output));
-			}
-		} catch (Exception e) {
-			System.out.println("SampleImporter > Erreur lors de la lecture");
-		}
-		return samples;
+		this.inputSize = inputSize;
 	}
 	
 	@Override
 	public List<ISample> importSamples() {
-		List<ISample> samples = new LinkedList<ISample>();
-		double[] input = null;
+		return readAndMap(line ->{
+			String[] parts = line.split(this.separator);
+			double[] input = extractPart(parts, 0, this.inputSize);
+			return new CommonSample(input);
+		});
+	}
+	
+	@Override
+	public List<ILabeledSample> importLabeledSamples() {
+		return readAndMap(line ->{
+			String[] parts = line.split(this.separator);
+			double[] input = extractPart(parts, 0, this.inputSize);
+			double[] output = extractPart(parts, this.inputSize, parts.length);
+			return new CommonLabeledSample(input, output);
+		});
+	}
+	
+	private <T> List<T> readAndMap(Function<String, T> mapper){
+		List<T> result = new ArrayList<T>();
 		try(BufferedReader reader = new BufferedReader(new InputStreamReader(in))){
-			while(reader.ready()) {
-				String line = reader.readLine();
-				String[] values = line.split(separator);
-				input = new double[values.length];
-				for(int i = 0 ; i < values.length; i++) {
-					input[i] = Double.parseDouble(values[i]);
-				}
-				samples.add(new CommonSample(input));
+			String line;
+			while((line = reader.readLine()) != null) {
+				result.add(mapper.apply(line));
 			}
-		} catch (Exception e) {
+		} catch (IOException e) {
 			System.out.println("SampleImporter > Erreur lors de la lecture");
 		}
-		return samples;
+		return result;
+	}
+	
+	private double[] extractPart(String[] lineParts, int beginIndex, int endIndex) {
+		double[] result = new double[endIndex - beginIndex];
+		for(int i = beginIndex ; i < endIndex; i++) {
+			result[i - beginIndex] = Double.parseDouble(lineParts[i]);
+		}
+		return result;
 	}
 }

@@ -74,8 +74,8 @@ public class MultilayerExamples {
 
 		// Initializing a list of samples
 		ISampleImporter importer = new CsvSampleImporter(
-				MultilayerExamples.class.getResourceAsStream("/table_4_12.csv"), ",");
-		List<ILabeledSample> trainingSamples = importer.importSamples(2);
+				MultilayerExamples.class.getResourceAsStream("/table_4_12.csv"), ",", 2);
+		List<ILabeledSample> trainingSamples = importer.importLabeledSamples();
 
 		// Setting up the model
 		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(new AdalineTrainingMode());
@@ -117,8 +117,8 @@ public class MultilayerExamples {
 
 		// Initializing a list of samples
 		ISampleImporter importer = new CsvSampleImporter(
-				MultilayerExamples.class.getResourceAsStream("/table_4_14.csv"), ",");
-		List<ILabeledSample> trainingSamples = importer.importSamples(2);
+				MultilayerExamples.class.getResourceAsStream("/table_4_14.csv"), ",", 2);
+		List<ILabeledSample> trainingSamples = importer.importLabeledSamples();
 
 		// Setting up the model
 		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(new AdalineTrainingMode());
@@ -158,7 +158,7 @@ public class MultilayerExamples {
 	public static void table4_17() {
 		// Initializing a list of samples
 		List<ILabeledSample> trainingSamples = new CsvSampleImporter(
-				MonoNeuronExamples.class.getResourceAsStream("/table_4_17.csv"), ",").importSamples(1);
+				MonoNeuronExamples.class.getResourceAsStream("/table_4_17.csv"), ",", 1).importLabeledSamples();
 
 		// Setting up the model
 		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(
@@ -198,8 +198,8 @@ public class MultilayerExamples {
 
 		// Initializing a list of samples
 		ISampleImporter importer = new CsvSampleImporter(
-				MultilayerExamples.class.getResourceAsStream("/test_sacha.csv"), ",");
-		List<ILabeledSample> trainingSamples = importer.importSamples(2);
+				MultilayerExamples.class.getResourceAsStream("/test_sacha.csv"), ",", 2);
+		List<ILabeledSample> trainingSamples = importer.importLabeledSamples();
 
 		// Setting up the model
 		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(new AdalineTrainingMode());

@@ -29,7 +29,7 @@ public class ImageExample {
 
 		// Initializing a list of samples
 		ISampleImporter importer = new ZipSampleImporter(ExampleApp.class.getResourceAsStream("/image/symbols.zip"), ",");
-		List<ILabeledSample> trainingSamples = importer.importSamples(-1);
+		List<ILabeledSample> trainingSamples = importer.importLabeledSamples();
 		System.out.println("Training on " + trainingSamples.size() + " training samples");
 
 		// Setting up the model

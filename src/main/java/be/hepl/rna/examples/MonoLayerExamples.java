@@ -29,8 +29,8 @@ public class MonoLayerExamples {
 
 		// Initializing a list of samples
 		ISampleImporter importer = new CsvSampleImporter(
-				MultilayerExamples.class.getResourceAsStream("/table_3_1.csv"), ",");
-		List<ILabeledSample> trainingSamples = importer.importSamples(2);
+				MultilayerExamples.class.getResourceAsStream("/table_3_1.csv"), ",",2);
+		List<ILabeledSample> trainingSamples = importer.importLabeledSamples();
 
 		// Setting up the model
 		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(new AdalineTrainingMode());
@@ -71,8 +71,8 @@ public class MonoLayerExamples {
 
 		// Initializing a list of samples
 		ISampleImporter importer = new CsvSampleImporter(
-				MultilayerExamples.class.getResourceAsStream("/table_3_5.csv"), ",");
-		List<ILabeledSample> trainingSamples = importer.importSamples(25);
+				MultilayerExamples.class.getResourceAsStream("/table_3_5.csv"), ",", 25);
+		List<ILabeledSample> trainingSamples = importer.importLabeledSamples();
 
 		// Setting up the model
 		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(new AdalineTrainingMode());
