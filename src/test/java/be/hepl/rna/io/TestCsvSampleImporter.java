@@ -11,8 +11,10 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import be.hepl.rna.common.ILabeledSample;
-import be.hepl.rna.common.ISample;
+import be.hepl.rna.api.ILabeledSample;
+import be.hepl.rna.api.ISample;
+import be.hepl.rna.api.ISampleImporter;
+import be.hepl.rna.api.impl.CsvSampleImporter;
 
 public class TestCsvSampleImporter {
 	private InputStream fakeInputStream;

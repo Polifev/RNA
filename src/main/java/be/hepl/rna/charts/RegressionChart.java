@@ -14,8 +14,8 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import be.hepl.rna.common.ILabeledSample;
-import be.hepl.rna.common.ILinearModel;
+import be.hepl.rna.api.ILabeledSample;
+import be.hepl.rna.api.ILinearModel;
 
 public class RegressionChart {
 

@@ -2,19 +2,18 @@ package be.hepl.rna.examples;
 
 import java.util.List;
 
-import be.hepl.rna.ExampleApp;
-import be.hepl.rna.common.IClassificator;
-import be.hepl.rna.common.ILabeledSample;
-import be.hepl.rna.common.INeuralNetwork;
-import be.hepl.rna.common.ISample;
-import be.hepl.rna.common.impl.GaussianWeightsInitializer;
-import be.hepl.rna.io.ISampleImporter;
-import be.hepl.rna.io.ZipSampleImporter;
-import be.hepl.rna.matrix.MatrixLayer;
-import be.hepl.rna.matrix.MatrixNeuralNetwork;
-import be.hepl.rna.matrix.stopconditions.LossCondition;
-import be.hepl.rna.matrix.trainingmode.FullBatchGradientDescentTrainingMode;
-import be.hepl.rna.matrix.wrappers.MatrixClassificatorWrapper;
+import be.hepl.rna.api.IClassificator;
+import be.hepl.rna.api.ILabeledSample;
+import be.hepl.rna.api.INeuralNetwork;
+import be.hepl.rna.api.ISample;
+import be.hepl.rna.api.ISampleImporter;
+import be.hepl.rna.api.impl.GaussianWeightsInitializer;
+import be.hepl.rna.api.impl.ZipSampleImporter;
+import be.hepl.rna.api.impl.matrix.FullBatchGradientDescentTrainingMode;
+import be.hepl.rna.api.impl.matrix.LossCondition;
+import be.hepl.rna.api.impl.matrix.MatrixClassificatorWrapper;
+import be.hepl.rna.api.impl.matrix.MatrixLayer;
+import be.hepl.rna.api.impl.matrix.MatrixNeuralNetwork;
 import cern.colt.matrix.DoubleMatrix1D;
 import cern.colt.matrix.DoubleMatrix2D;
 
@@ -28,7 +27,7 @@ public class ImageExample {
 		final int MAX_IT = 10_000;
 
 		// Initializing a list of samples
-		ISampleImporter importer = new ZipSampleImporter(ExampleApp.class.getResourceAsStream("/image/symbols.zip"), ",");
+		ISampleImporter importer = new ZipSampleImporter(LaunchExamples.class.getResourceAsStream("/image/symbols.zip"), ",");
 		List<ILabeledSample> trainingSamples = importer.importLabeledSamples();
 		System.out.println("Training on " + trainingSamples.size() + " training samples");
 
@@ -56,7 +55,7 @@ public class ImageExample {
 		String[] classes = new String[] { "INCONNU", "PLUS", "MOINS", "FOIS", "DIVISER" };
 		IClassificator classificator = new MatrixClassificatorWrapper(model, 0.5);
 		
-		ISampleImporter testImporter = new ZipSampleImporter(ExampleApp.class.getResourceAsStream("/image/symbols_test.zip"), ",");
+		ISampleImporter testImporter = new ZipSampleImporter(LaunchExamples.class.getResourceAsStream("/image/symbols_test.zip"), ",");
 		List<ISample> testSamples = testImporter.importSamples();
 		System.out.println("Testing on " + testSamples.size() + " test samples");
 		for(ISample sample : testSamples) {
