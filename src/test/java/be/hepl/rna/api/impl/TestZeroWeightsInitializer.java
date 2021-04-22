@@ -1,11 +1,10 @@
-package be.hepl.rna.common;
+package be.hepl.rna.api.impl;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
 import be.hepl.rna.api.IWeightsInitializer;
-import be.hepl.rna.api.impl.ZeroWeightsInitializer;
 
 public class TestZeroWeightsInitializer {
 	
