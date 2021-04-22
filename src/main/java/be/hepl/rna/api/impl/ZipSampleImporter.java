@@ -54,7 +54,7 @@ public class ZipSampleImporter implements ISampleImporter {
 	}
 	
 	@Override
-	public List<ILabeledSample> importLabeledSamples() {
+	public List<ILabeledSample> importAsLabeledSamples() {
 		List<ILabeledSample> result = new ArrayList<ILabeledSample>();
 		ZipInputStream zip = new ZipInputStream(this.inputStream);
 		List<String> labels = new ArrayList<String>();

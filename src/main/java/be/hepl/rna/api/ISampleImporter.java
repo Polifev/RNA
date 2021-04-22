@@ -4,5 +4,5 @@ import java.util.List;
 
 public interface ISampleImporter {
 	public List<ISample> importSamples();
-	public List<ILabeledSample> importLabeledSamples();
+	public List<ILabeledSample> importAsLabeledSamples();
 }

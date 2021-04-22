@@ -2,10 +2,6 @@ package be.hepl.rna.api;
 
 import java.util.function.Predicate;
 
-import javax.naming.OperationNotSupportedException;
-
-import be.hepl.rna.api.impl.matrix.AccuracyMetric;
-
 /**
  * 
  * @author Pol
@@ -16,9 +12,9 @@ import be.hepl.rna.api.impl.matrix.AccuracyMetric;
 public interface INeuralNetwork<D1, D2> {
 	void addLayer(ILayer<D2> layer);
 	void setTrainingParameters(int batchSize, ITrainingMode<D1, D2> trainingMode);
-	void registerMetric(String string, AccuracyMetric accuracyMetric);
+	void registerMetric(String string, IMetric<D1> accuracyMetric);
 	void stopWhen(String metricName, Predicate<Double> condition);
 	
-	void train(int iterationCount, Iterable<ILabeledSample> trainingSamples) throws OperationNotSupportedException;
+	void train(int iterationCount, Iterable<ILabeledSample> trainingSamples);
 	ISampleEvaluation<D1> evaluate(ISample sample);
 }

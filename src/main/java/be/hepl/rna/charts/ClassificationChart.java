@@ -1,6 +1,7 @@
 package be.hepl.rna.charts;
 
 import java.awt.Color;
+
 import javax.swing.JFrame;
 
 import org.jfree.chart.ChartFactory;
@@ -14,6 +15,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 import be.hepl.rna.api.IClassificator;
 import be.hepl.rna.api.ILabeledSample;
+import be.hepl.rna.api.Sweep;
 
 public class ClassificationChart {
 
@@ -34,18 +36,17 @@ public class ClassificationChart {
 		}
 	}
 	
-	public void setClassificator(IClassificator model, double xMin, double xMax, double xSamplingStep, double yMin, double yMax, double ySamplingStep) {
-		for(double x = xMin; x <= xMax; x+= xSamplingStep) {
-			for(double y = yMin; y <= yMax; y+= ySamplingStep) {
-				
+	public void setClassificator(IClassificator model, Sweep xSweep, Sweep ySweep) {
+		xSweep.getValues().forEach(x -> {
+			ySweep.getValues().forEach(y -> {
 				int classIndex = model.classify(x, y);
 				if(interpreteNoClass) {
 					classification[classIndex + 1].add(x,y);
 				} else if(classIndex >= 0) {
 					this.data[classIndex].add(x,y);
 				}
-			}
-		}
+			});
+		});
 	}
 	
 	public void setData(Iterable<ILabeledSample> data) {

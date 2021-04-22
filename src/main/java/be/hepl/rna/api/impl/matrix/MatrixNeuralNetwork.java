@@ -8,8 +8,6 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import javax.naming.OperationNotSupportedException;
-
 import be.hepl.rna.api.ILabeledSample;
 import be.hepl.rna.api.ILayer;
 import be.hepl.rna.api.IMetric;
@@ -51,7 +49,7 @@ public class MatrixNeuralNetwork implements INeuralNetwork<DoubleMatrix1D, Doubl
 	}
 
 	@Override
-	public void train(int iterationCount, Iterable<ILabeledSample> trainingSamples) throws OperationNotSupportedException {
+	public void train(int iterationCount, Iterable<ILabeledSample> trainingSamples) {
 		// Setup the training data
 		List<DoubleMatrix1D> trainingInput = new ArrayList<DoubleMatrix1D>();
 		List<DoubleMatrix1D> trainingOutput = new ArrayList<DoubleMatrix1D>();
@@ -101,8 +99,11 @@ public class MatrixNeuralNetwork implements INeuralNetwork<DoubleMatrix1D, Doubl
 	}
 
 	@Override
-	public void registerMetric(String metricName, AccuracyMetric accuracyMetric) {
+	public void registerMetric(String metricName, IMetric<DoubleMatrix1D> accuracyMetric) {
 		this.metrics.put(metricName, accuracyMetric);
+		if(this.onMetricComputed.get(metricName) == null) {
+			this.onMetricComputed.put(metricName, (d) -> {});
+		}
 	}
 
 	@Override

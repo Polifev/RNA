@@ -34,7 +34,7 @@ public class CsvSampleImporter implements ISampleImporter {
 	}
 	
 	@Override
-	public List<ILabeledSample> importLabeledSamples() {
+	public List<ILabeledSample> importAsLabeledSamples() {
 		return readAndMap(line ->{
 			String[] parts = line.split(this.separator);
 			double[] input = extractPart(parts, 0, this.inputSize);

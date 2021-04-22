@@ -16,6 +16,7 @@ import be.hepl.rna.api.impl.matrix.AccuracyMetric;
 import cern.colt.matrix.DoubleFactory1D;
 import cern.colt.matrix.DoubleMatrix1D;
 
+@SuppressWarnings("unchecked")
 public class TestAccuracyMetric {
 	private static final double EPSILON = 0.00_000_1;
 	private IBatchEvaluation<DoubleMatrix1D> iterationEvaluation;
@@ -45,14 +46,12 @@ public class TestAccuracyMetric {
 		assertEquals(0.75, new AccuracyMetric(0.5).compute(iterationEvaluation), EPSILON);
 	}
 
-	@SuppressWarnings("unchecked")
 	private IBatchEvaluation<DoubleMatrix1D> mockIteration(List<ISampleEvaluation<DoubleMatrix1D>> samples) {
 		IBatchEvaluation<DoubleMatrix1D> iterationEvaluation = mock(IBatchEvaluation.class);
 		when(iterationEvaluation.getSampleEvaluations()).thenReturn(samples);
 		return iterationEvaluation;
 	}
 
-	@SuppressWarnings("unchecked")
 	private ISampleEvaluation<DoubleMatrix1D> mockSample(double x1, double x2, double y, double expected) {
 		ISampleEvaluation<DoubleMatrix1D> sample = mock(ISampleEvaluation.class);
 		when(sample.getGivenInput()).thenReturn(DoubleFactory1D.dense.make(new double[] { x1, x2 }));

@@ -43,7 +43,7 @@ public class TestCsvSampleImporter {
 		ISampleImporter importer = new CsvSampleImporter(fakeInputStream, ",", 2);
 
 		// When
-		List<ILabeledSample> labeledSamples = importer.importLabeledSamples();
+		List<ILabeledSample> labeledSamples = importer.importAsLabeledSamples();
 
 		// Then
 		assertEquals(4, labeledSamples.size());
@@ -70,7 +70,7 @@ public class TestCsvSampleImporter {
 		ISampleImporter importer = new CsvSampleImporter(fakeInputStream, ",", inputLength);
 
 		// When
-		List<ILabeledSample> labeledSamples = importer.importLabeledSamples();
+		List<ILabeledSample> labeledSamples = importer.importAsLabeledSamples();
 
 		// Then
 		ILabeledSample labeledSample1 = labeledSamples.get(0);
@@ -85,7 +85,7 @@ public class TestCsvSampleImporter {
 		ISampleImporter importer = new CsvSampleImporter(fakeInputStream, ",", inputLength);
 
 		// When
-		List<ILabeledSample> samples = importer.importLabeledSamples();
+		List<ILabeledSample> samples = importer.importAsLabeledSamples();
 
 		// Then
 		ILabeledSample sample1 = samples.get(0);
@@ -136,7 +136,7 @@ public class TestCsvSampleImporter {
 		ISampleImporter importer = new CsvSampleImporter(fakeInputStream, ",", 2);
 	
 		// When
-		importer.importLabeledSamples();
+		importer.importAsLabeledSamples();
 	
 		// Then
 		assertEquals(0, fakeInputStream.available());
@@ -166,7 +166,7 @@ public class TestCsvSampleImporter {
 		ISampleImporter importer = new CsvSampleImporter(fakeInputStream, ",", 2);
 	
 		// When
-		List<ILabeledSample> samples = importer.importLabeledSamples();
+		List<ILabeledSample> samples = importer.importAsLabeledSamples();
 	
 		// Then
 		assertEquals(0, samples.size());
