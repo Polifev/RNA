@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import be.hepl.rna.api.impl.matrix.MatrixFunctions;
 import cern.colt.function.DoubleDoubleFunction;
 import cern.colt.function.DoubleFunction;
 
