@@ -12,7 +12,6 @@ import be.hepl.rna.api.ILabeledSample;
 import be.hepl.rna.api.INeuralNetwork;
 import be.hepl.rna.api.impl.CommonLabeledSample;
 import be.hepl.rna.api.impl.CsvSampleImporter;
-import be.hepl.rna.api.impl.ZeroWeightsInitializer;
 import be.hepl.rna.api.impl.matrix.AccuracyCondition;
 import be.hepl.rna.api.impl.matrix.AdalineTrainingMode;
 import be.hepl.rna.api.impl.matrix.BasicPerceptronTrainingMode;

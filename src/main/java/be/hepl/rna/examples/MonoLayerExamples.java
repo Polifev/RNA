@@ -11,8 +11,6 @@ import be.hepl.rna.api.ILabeledSample;
 import be.hepl.rna.api.INeuralNetwork;
 import be.hepl.rna.api.ISampleImporter;
 import be.hepl.rna.api.impl.CsvSampleImporter;
-import be.hepl.rna.api.impl.GaussianWeightsInitializer;
-import be.hepl.rna.api.impl.ZeroWeightsInitializer;
 import be.hepl.rna.api.impl.matrix.AdalineTrainingMode;
 import be.hepl.rna.api.impl.matrix.LossCondition;
 import be.hepl.rna.api.impl.matrix.MatrixClassificatorWrapper;
