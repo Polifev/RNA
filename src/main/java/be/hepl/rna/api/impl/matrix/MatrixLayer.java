@@ -33,7 +33,7 @@ public class MatrixLayer implements ILayer<DoubleMatrix2D> {
 	@Override
 	public ILayer<DoubleMatrix2D> initWeights(IWeightsInitializer initializer) {
 		for(int i = 0; i < getOutputSize(); i++) {
-			for(int j = 0; j < getInputSize()+1; j++) {
+			for(int j = 0; j < getInputSize(); j++) {
 				this.weights.setQuick(i, j, initializer.getWeight(i, j));
 			}
 		}
