@@ -1,4 +1,4 @@
-package be.hepl.rna.matrix;
+package be.hepl.rna.api.impl.matrix;
 
 import static org.junit.Assert.assertEquals;
 
