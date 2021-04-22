@@ -3,19 +3,19 @@ package be.hepl.rna.api.impl;
 import java.util.function.Function;
 
 public class ActivationFunctions {
-	public static final Function<Double, Double> IDENTITY = val -> val;
-	public static final Function<Double, Double> IDENTITY_DER = val -> 1.0;
+	private static final Function<Double, Double> IDENTITY = val -> val;
+	private static final Function<Double, Double> IDENTITY_DER = val -> 1.0;
 	
-	public static final Function<Double, Double> THRESHOLD = val -> val > 0 ? 1.0 : 0.0;
+	private static final Function<Double, Double> THRESHOLD = val -> val > 0 ? 1.0 : 0.0;
 	
-	public static final Function<Double,Double> SIGMOID = val -> 1.0 / (1 + Math.exp(-val));
-	public static final Function<Double,Double> SIGMOID_DER = val -> {
+	private static final Function<Double,Double> SIGMOID = val -> 1.0 / (1 + Math.exp(-val));
+	private static final Function<Double,Double> SIGMOID_DER = val -> {
 		double sig = SIGMOID.apply(val);
 		return sig * (1 - sig);
 	};
 	
-	public static final Function<Double, Double> TANH = val -> Math.tanh(val);
-	public static final Function<Double, Double> TANH_DER = val -> {
+	private static final Function<Double, Double> TANH = val -> Math.tanh(val);
+	private static final Function<Double, Double> TANH_DER = val -> {
 		double tanh = TANH.apply(val);
 		return 1 - tanh*tanh;
 	};
