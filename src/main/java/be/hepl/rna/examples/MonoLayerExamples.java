@@ -34,7 +34,7 @@ public class MonoLayerExamples {
 
 		// Setting up the model
 		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(new AdalineTrainingMode());
-		model.addLayer(new MatrixLayer(0.01, 2, 3, "identity", new ZeroWeightsInitializer()));
+		model.addLayer(new MatrixLayer(0.01, 2, 3, "identity"));
 
 		model.onIterationStarts(i -> System.out.printf("Iteration %d...\n", i + 1));
 		model.onIterationEnds(it -> System.out.println("...finished\n"));
@@ -76,7 +76,7 @@ public class MonoLayerExamples {
 
 		// Setting up the model
 		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(new AdalineTrainingMode());
-		model.addLayer(new MatrixLayer(0.01, 25, 4, "identity", new ZeroWeightsInitializer()));
+		model.addLayer(new MatrixLayer(0.01, 25, 4, "identity"));
 
 		model.onIterationStarts(i -> System.out.printf("Iteration %d...\n", i + 1));
 		model.onIterationEnds(it -> System.out.println("...finished\n"));

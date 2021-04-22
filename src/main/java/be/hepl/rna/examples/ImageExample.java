@@ -35,8 +35,8 @@ public class ImageExample {
 		// Setting up the model
 		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(
 				new FullBatchGradientDescentTrainingMode());
-		model.addLayer(new MatrixLayer(0.15, 256, 128, "sigmoid", new GaussianWeightsInitializer()));
-		model.addLayer(new MatrixLayer(0.15, 128, 4, "sigmoid", new GaussianWeightsInitializer()));
+		model.addLayer(new MatrixLayer(0.15, 256, 128, "sigmoid").initWeights(new GaussianWeightsInitializer()));
+		model.addLayer(new MatrixLayer(0.15, 128, 4, "sigmoid").initWeights(new GaussianWeightsInitializer()));
 
 		model.onIterationStarts(i -> System.out.printf("Iteration %d...\n", i + 1));
 		model.onIterationEnds(it -> System.out.println("...finished\n"));

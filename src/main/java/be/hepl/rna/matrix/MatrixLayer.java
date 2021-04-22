@@ -16,15 +16,11 @@ public class MatrixLayer implements ILayer<DoubleMatrix2D> {
 	 * @param outputSize
 	 * @param activationFunction
 	 */
-	public MatrixLayer(double learningRate, int inputSize, int outputSize, String activationFunctionName, IWeightsInitializer weightsInitializer) {
+	public MatrixLayer(double learningRate, int inputSize, int outputSize, String activationFunctionName) {
 		this.learningRate = learningRate;
 		this.weights = DoubleFactory2D.dense.make(outputSize, inputSize+1);
 		
-		for(int i = 0; i < outputSize; i++) {
-			for(int j = 0; j < inputSize+1; j++) {
-				this.weights.setQuick(i, j, weightsInitializer.getWeight(i, j));
-			}
-		}
+		
 		
 		this.activationFunctionName = activationFunctionName;
 	}
@@ -32,6 +28,16 @@ public class MatrixLayer implements ILayer<DoubleMatrix2D> {
 	@Override
 	public double getLearningRate() {
 		return learningRate;
+	}
+	
+	@Override
+	public ILayer<DoubleMatrix2D> initWeights(IWeightsInitializer initializer) {
+		for(int i = 0; i < getOutputSize(); i++) {
+			for(int j = 0; j < getInputSize()+1; j++) {
+				this.weights.setQuick(i, j, initializer.getWeight(i, j));
+			}
+		}
+		return this;
 	}
 	
 	@Override

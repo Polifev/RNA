@@ -38,8 +38,8 @@ public class MultilayerExamples {
 
 		// Setting up the model
 		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(new FullBatchGradientDescentTrainingMode());
-		model.addLayer(new MatrixLayer(0.8, 2, 2, "tanh", new GaussianWeightsInitializer()));
-		model.addLayer(new MatrixLayer(0.4, 2, 1, "sigmoid", new GaussianWeightsInitializer()));
+		model.addLayer(new MatrixLayer(0.8, 2, 2, "tanh").initWeights(new GaussianWeightsInitializer()));
+		model.addLayer(new MatrixLayer(0.4, 2, 1, "sigmoid").initWeights(new GaussianWeightsInitializer()));
 
 		model.onIterationStarts(i -> System.out.printf("Iteration %d...\n", i + 1));
 
@@ -79,8 +79,8 @@ public class MultilayerExamples {
 
 		// Setting up the model
 		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(new AdalineTrainingMode());
-		model.addLayer(new MatrixLayer(0.50, 2, 15, "sigmoid", new GaussianWeightsInitializer()));
-		model.addLayer(new MatrixLayer(0.50, 15, 1, "sigmoid", new GaussianWeightsInitializer()));
+		model.addLayer(new MatrixLayer(0.50, 2, 15, "sigmoid").initWeights(new GaussianWeightsInitializer()));
+		model.addLayer(new MatrixLayer(0.50, 15, 1, "sigmoid").initWeights(new GaussianWeightsInitializer()));
 
 		model.onIterationStarts(i -> System.out.printf("Iteration %d...\n", i + 1));
 		model.onIterationEnds(it -> System.out.println("...finished\n"));
@@ -122,8 +122,8 @@ public class MultilayerExamples {
 
 		// Setting up the model
 		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(new AdalineTrainingMode());
-		model.addLayer(new MatrixLayer(0.50, 2, 15, "sigmoid", new GaussianWeightsInitializer()));
-		model.addLayer(new MatrixLayer(0.50, 15, 3, "sigmoid", new GaussianWeightsInitializer()));
+		model.addLayer(new MatrixLayer(0.50, 2, 15, "sigmoid").initWeights(new GaussianWeightsInitializer()));
+		model.addLayer(new MatrixLayer(0.50, 15, 3, "sigmoid").initWeights(new GaussianWeightsInitializer()));
 
 		model.onIterationStarts(i -> System.out.printf("Iteration %d...\n", i + 1));
 		model.onIterationEnds(it -> System.out.println("...finished\n"));
@@ -163,8 +163,8 @@ public class MultilayerExamples {
 		// Setting up the model
 		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(
 				new FullBatchGradientDescentTrainingMode());
-		model.addLayer(new MatrixLayer(0.001, 1, 8, "tanh", new GaussianWeightsInitializer(0, 1)));
-		model.addLayer(new MatrixLayer(0.001, 8, 1, "identity", new GaussianWeightsInitializer(0, 1)));
+		model.addLayer(new MatrixLayer(0.001, 1, 8, "tanh").initWeights(new GaussianWeightsInitializer()));
+		model.addLayer(new MatrixLayer(0.001, 8, 1, "identity").initWeights(new GaussianWeightsInitializer()));
 
 		model.onIterationStarts(i -> System.out.printf("Iteration %d...\n", i + 1));
 		model.onIterationEnds(it -> System.out.println("...finished\n"));
@@ -203,8 +203,8 @@ public class MultilayerExamples {
 
 		// Setting up the model
 		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(new AdalineTrainingMode());
-		model.addLayer(new MatrixLayer(0.50, 2, 30, "sigmoid", new GaussianWeightsInitializer()));
-		model.addLayer(new MatrixLayer(0.50, 30, 5, "sigmoid", new GaussianWeightsInitializer()));
+		model.addLayer(new MatrixLayer(0.50, 2, 30, "sigmoid").initWeights(new GaussianWeightsInitializer()));
+		model.addLayer(new MatrixLayer(0.50, 30, 5, "sigmoid").initWeights(new GaussianWeightsInitializer()));
 
 		model.onIterationStarts(i -> System.out.printf("Iteration %d...\n", i + 1));
 		model.onIterationEnds(it -> System.out.println("...finished\n"));

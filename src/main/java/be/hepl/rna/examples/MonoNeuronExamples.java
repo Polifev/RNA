@@ -40,7 +40,7 @@ public class MonoNeuronExamples {
 		// Setting up the model
 		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(
 				new BasicPerceptronTrainingMode());
-		model.addLayer(new MatrixLayer(0.8, 2, 1, "threshold", new ZeroWeightsInitializer()));
+		model.addLayer(new MatrixLayer(0.8, 2, 1, "threshold"));
 
 		model.onIterationStarts(i -> System.out.printf("Iteration %d...\n", i + 1));
 		model.onIterationEnds(it -> System.out.println("...finished\n"));
@@ -76,7 +76,7 @@ public class MonoNeuronExamples {
 		// Setting up the model
 		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(
 				new AdalineTrainingMode());
-		model.addLayer(new MatrixLayer(0.0011, 2, 1, "identity", new ZeroWeightsInitializer()));
+		model.addLayer(new MatrixLayer(0.0011, 2, 1, "identity"));
 
 		model.onIterationStarts(i -> System.out.printf("Iteration %d...\n", i + 1));
 		model.onIterationEnds(it -> System.out.println("...finished\n"));
@@ -112,7 +112,7 @@ public class MonoNeuronExamples {
 		// Setting up the model
 		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(
 				new FullBatchGradientDescentTrainingMode());
-		model.addLayer(new MatrixLayer(0.0015, 2, 1, "identity", new ZeroWeightsInitializer()));
+		model.addLayer(new MatrixLayer(0.0015, 2, 1, "identity"));
 
 		model.onIterationStarts(i -> System.out.printf("Iteration %d...\n", i + 1));
 		model.onIterationEnds(it -> System.out.println("...finished\n"));
@@ -148,7 +148,7 @@ public class MonoNeuronExamples {
 		// Setting up the model
 		INeuralNetwork<DoubleMatrix1D, DoubleMatrix2D> model = new MatrixNeuralNetwork(
 				new AdalineTrainingMode());
-		model.addLayer(new MatrixLayer(0.00016, 1, 1, "identity", new ZeroWeightsInitializer()));
+		model.addLayer(new MatrixLayer(0.00016, 1, 1, "identity"));
 
 		model.onIterationStarts(i -> System.out.printf("Iteration %d...\n", i + 1));
 		model.onIterationEnds(it -> System.out.println("...finished\n"));
