@@ -1,19 +1,14 @@
 package be.hepl.rna.examples;
 
 import static be.hepl.rna.api.impl.Predicates.greaterOrEqualTo;
+import static be.hepl.rna.api.impl.Sweep.sweep;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.util.List;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 import be.hepl.rna.api.IClassificator;
 import be.hepl.rna.api.ILabeledSample;
 import be.hepl.rna.api.INeuralNetwork;
 import be.hepl.rna.api.ISampleImporter;
-import be.hepl.rna.api.Sweep;
 import be.hepl.rna.api.impl.CsvSampleImporter;
 import be.hepl.rna.api.impl.matrix.AccuracyMetric;
 import be.hepl.rna.api.impl.matrix.GradientDescentTrainingMode;
@@ -43,7 +38,7 @@ public class LaunchExamples {
 		IClassificator classificator = new MatrixClassificatorWrapper(network, 0.5);
 		ClassificationChart chart = new ClassificationChart("test", new String[] {"0", "1"},  true);
 		chart.setData(samples);
-		chart.setClassificator(classificator, new Sweep(-0.1, 1.1, 0.1), new Sweep(-0.1, 1.1, 0.1));
+		chart.setClassificator(classificator, sweep(-0.1, 1.1, 0.1), sweep(-0.1, 1.1, 0.1));
 		
 		System.out.println(classificator.classify(0, 0));
 		System.out.println(classificator.classify(0, 1));
